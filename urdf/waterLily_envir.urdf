@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<robot name="object">
+  <link name="base_link"> <!-- required name-->
+    <inertial>
+      <origin xyz="0 0 0" /> 
+      <mass value="1.0" />
+      <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="1.0"  iyz="0.0"  izz="100.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/waterLily2.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/waterLily2.dae"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="j_decor_one" type="fixed">
+    <parent link="base_link"/>
+    <child link="l_decor_one"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_one">
+    <visual>
+      <origin xyz="3 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/arbre.dae"/>
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="3 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/arbre.dae"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="j_decor_two" type="fixed">
+    <parent link="base_link"/>
+    <child link="l_decor_two"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_two">
+    <visual>
+      <origin xyz="-3.5 -1 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/wood_stack.dae"/>
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="-3.5 -1 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/wood_stack.dae"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="j_decor_three" type="fixed">
+    <parent link="base_link"/>
+    <child link="l_decor_three"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_three">
+    <visual>
+      <origin xyz="-1 2 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/bush.dae"/>
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="-1 2 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/bush.dae"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="j_decor_four" type="fixed">
+    <parent link="base_link"/>
+    <child link="l_decor_four"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_four">
+    <visual>
+      <origin xyz="0 1 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/etang2.dae"/>
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="0 1 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/etang2.dae"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="j_decor_five" type="fixed">
+    <parent link="base_link"/>
+    <child link="l_decor_five"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_five">
+    <visual>
+      <origin xyz="3 -1 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/grass.dae"/>
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="3 -1 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/grass.dae"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="j_decor_six" type="fixed">
+    <parent link="base_link"/>
+    <child link="l_decor_six"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_six">
+    <visual>
+      <origin xyz="1 2 -0.05"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/stones3.dae"/>
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="1 2 -0.05"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/stones3.dae"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="j_decor_seven" type="fixed">
+    <parent link="base_link"/>
+    <child link="l_decor_seven"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_seven"> <!-- another grass -->
+    <visual>
+      <origin xyz="3.6 1.5 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/grass.dae"/>
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="3.6 1.5 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/grass.dae"/>
+      </geometry>
+    </collision>
+  </link>
+</robot>

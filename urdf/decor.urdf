@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<robot name="decor"> <!-- puzzle hard environment, slot size=0.16x0.6 -->
+  <material name="Green">
+    <color rgba="0 0.8 0 0.5"/>
+  </material>
+  
+  <link name="decor_base">
+    <visual>
+      <origin xyz="-0.79 0 -0.05"/>
+      <geometry>
+        <box size="1.42 3 0.1" />
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.79 0 -0.05"/>
+      <geometry>
+        <box size="1.42 3 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="j_decor_one" type="fixed">
+    <parent link="decor_base"/>
+    <child link="l_decor_one"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_one">
+    <visual>
+      <origin xyz="0.79 0 -0.05"/>
+      <geometry>
+        <box size="1.42 3 0.1" />
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="0.79 0 -0.05"/>
+      <geometry>
+        <box size="1.42 3 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  
+  
+  <joint name="j_decor_two" type="fixed">
+    <parent link="l_decor_one"/>
+    <child link="l_decor_two"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_two">
+    <visual>
+      <origin xyz="0 -0.9 -0.05"/>
+      <geometry>
+        <box size="0.159 1.2 0.1" />
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="0 -0.9 -0.05"/>
+      <geometry>
+        <box size="0.159 1.2 0.1" />
+      </geometry>
+    </collision>   
+  </link>
+  
+  
+  <joint name="j_decor_three" type="fixed">
+    <parent link="l_decor_two"/>
+    <child link="l_decor_three"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_three">
+    <visual>
+      <origin xyz="0 0.9 -0.05"/>
+      <geometry>
+        <box size="0.159 1.2 0.1" />
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0.9 -0.05"/>
+      <geometry>
+        <box size="0.159 1.2 0.1" />
+      </geometry>
+    </collision>   
+  </link>
+</robot>
