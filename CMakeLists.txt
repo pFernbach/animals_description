@@ -34,6 +34,15 @@ SET(CATKIN_PACKAGE_SHARE_DESTINATION
   ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
 
  # environment URDF - DAE - textures
+install(FILES urdf/multiple_planes_3d.urdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
+
+install(FILES urdf/plane_3d.urdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
+
+install(FILES urdf/inclined_plane_3d.urdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
+
 install(FILES urdf/environment_3d.urdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
 
