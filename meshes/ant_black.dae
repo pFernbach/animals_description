@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.70.0 commit date:2014-03-19, commit time:05:02, hash:19e627c</authoring_tool>
     </contributor>
-    <created>2015-06-16T15:39:36</created>
-    <modified>2015-06-16T15:39:36</modified>
+    <created>2015-07-15T10:27:48</created>
+    <modified>2015-07-15T10:27:48</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -209,7 +209,7 @@
         <instance_light url="#Lamp-light"/>
       </node>
       <node id="ant_blk" name="ant_blk" type="NODE">
-        <matrix sid="transform">0.1 0 0 0 0 7.54979e-9 -0.1 8.90845e-10 0 0.1 7.54979e-9 6.19849e-4 0 0 0 1</matrix>
+        <matrix sid="transform">0.2007532 0 0 0 0 1.51564e-8 -0.2007532 8.90845e-10 0 0.2007532 1.51564e-8 6.19849e-4 0 0 0 1</matrix>
         <instance_geometry url="#ant_blk-mesh">
           <bind_material>
             <technique_common>

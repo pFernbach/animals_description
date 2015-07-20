@@ -168,49 +168,114 @@ def parseParabola (pid, parabNB):
 # --------------------------------------------------------------------#
 
 # Parse parabola information contained in a hpp log
-def parseIntersectionConePlane (pid, xValues, zPlusValues, zMinusValues):
-    prefixConfig = 'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/parabola/steering-method-parabola.cc:465: q: '
-    prefix_x = 'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/parabola/steering-method-parabola.cc:466: x: '
-    prefix_z_plus = 'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/parabola/steering-method-parabola.cc:467: z_x_plus: '
-    prefix_z_minus = 'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/parabola/steering-method-parabola.cc:468: z_x_minus: '
+def parseIntersectionConePlane (pid, suffixConfig, suffixXPlus, suffixXMinus, suffixZPlus, suffixZMinus):
+    prefix = 'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/parabola/steering-method-parabola.cc:'
+    prefixConfig = prefix+suffixConfig
+    prefixXPlus = prefix+suffixXPlus
+    prefixXMinus = prefix+suffixXMinus
+    prefixZPlus = prefix+suffixZPlus
+    prefixZMinus = prefix+suffixZMinus
     
     lineNB = 0
     configs = []
-    x_vector = []
-    z_plus_vector = []
-    z_minus_vector = []
+    xPlus_vector = []
+    xMinus_vector = []
+    zPlus_vector = []
+    zMinus_vector = []
     with open (logFile + "journal." + str(pid) + ".log") as f:
         lines=f.readlines()
         for line in lines: # lines[lineNB] corresponds to the actual line
             if line [:len (prefixConfig)] == prefixConfig :
-                suffixConfig = line [len (prefixConfig):]
-                suffixConfigSplit = suffixConfig.strip (',\n').split (',')
-                xLine = lines[lineNB+1]
-                zPlusLine = lines[lineNB+2]
-                zMinusLine = lines[lineNB+3]
-                suffix_x = xLine [len (prefix_x):]
-                suffix_xStrip = suffix_x.strip (',\n').split (',')
-                suffix_z_plus = zPlusLine [len (prefix_z_plus):]
-                suffix_zPlusStrip = suffix_z_plus.strip (',\n').split (',')
-                suffix_z_minus = zMinusLine [len (prefix_z_minus):]
-                suffix_zMinusStrip = suffix_z_minus.strip (',\n').split (',')
+                suffixConfigSplit = line [len (prefixConfig):].strip (',\n').split (',')
+                config = map (float, suffixConfigSplit) # convert into float
+                configs.append (config)
                 
-                try:
-                    config = map (float, suffixConfigSplit) # convert into float
-                    configs.append (config)
-                    
-                    x = map (float, suffix_xStrip)
-                    x_vector.append (x)
-                    z_plus = map (float, suffix_zPlusStrip)
-                    z_plus_vector.append (z_plus)
-                    z_minus = map (float, suffix_zMinusStrip)
-                    z_minus_vector.append (z_minus)
-                    
-                except:
-                    print ("suffixConfigSplit=%s"%suffixConfigSplit)
-                    print ("suffix_xStrip=%s"%suffix_xStrip)
-                    print ("suffix_zPlusStrip=%s"%suffix_zPlusStrip)
-                    print ("suffix_zMinusStrip=%s"%suffix_zMinusStrip)
+                xPlusLine = lines[lineNB+1]
+                xPlus = float(xPlusLine[len (prefixXPlus):].strip ('\n'))
+                print xPlus
+                
+                xLineMinus = lines[lineNB+2]
+                xMinus = float(xLineMinus[len (prefixXMinus):].strip ('\n'))
+                print xMinus
+                
+                zPlusLine = lines[lineNB+3]
+                zPlus = float(zPlusLine [len (prefixZPlus):].strip ('\n'))
+                print zPlus
+                
+                zMinusLine = lines[lineNB+4]
+                zMinus = float(zMinusLine [len (prefixZMinus):].strip ('\n'))
+                print zMinus
+                
+                xPlus_vector.append (xPlus)
+                xMinus_vector.append (xMinus)
+                zPlus_vector.append (zPlus)
+                zMinus_vector.append (zMinus)
+                
             lineNB = lineNB+1
-    return np.array (zip (*configs)) # transpose and make array
+    return np.array (zip (*configs)), xPlus_vector, xMinus_vector, zPlus_vector, zMinus_vector
 
+# --------------------------------------------------------------------#
+
+# Parse alpha angle values
+# parseAlphaAngles (num_log, '285: alpha_0_min: ', '286: alpha_0_max: ', '303: alpha_lim_minus: ', '302: alpha_lim_plus: ', '317: alpha_imp_inf: ', '318: alpha_imp_sup: ', '290: alpha_inf4: '):
+def parseAlphaAngles (pid, suffixAlphaMin, suffixAlphaMax, suffixAlphaMinus, suffixAlphaPlus, suffixAlphaInf, suffixAlphaSup, suffixAlphaInf4):
+    prefix = 'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/parabola/steering-method-parabola.cc:'
+    prefixAlphaMin = prefix+suffixAlphaMin
+    prefixAlphaMax = prefix+suffixAlphaMax
+    prefixAlphaMinus = prefix+suffixAlphaMinus
+    prefixAlphaPlus = prefix+suffixAlphaPlus
+    prefixAlphaInf = prefix+suffixAlphaInf
+    prefixAlphaSup = prefix+suffixAlphaSup
+    prefixAlphaInf4 = prefix+suffixAlphaInf4
+    
+    alphaMin_vector = []
+    alphaMax_vector = []
+    alphaMinus_vector = []
+    alphaPlus_vector = []
+    alphaInf_vector = []
+    alphaSup_vector = []
+    alphaInf4_vector = []
+	
+    with open (logFile + "journal." + str(pid) + ".log") as f:
+        lines=f.readlines()
+        for line in lines:
+            if line [:len (prefixAlphaMin)] == prefixAlphaMin :
+                alphaMin = float(line[len (prefixAlphaMin):].strip ('\n'))
+                print alphaMin
+                alphaMin_vector.append (alphaMin)
+			
+            if line [:len (prefixAlphaMax)] == prefixAlphaMax :
+                alphaMax = float(line[len (prefixAlphaMax):].strip ('\n'))
+                print alphaMax
+                alphaMax_vector.append (alphaMax)
+            
+            if line [:len (prefixAlphaInf4)] == prefixAlphaInf4 :
+                alphaInf4 = float(line[len (prefixAlphaInf4):].strip ('\n'))
+                print alphaInf4
+                alphaInf4_vector.append (alphaInf4)
+            
+            if line [:len (prefixAlphaMinus)] == prefixAlphaMinus :
+                alphaMinus = float(line[len (prefixAlphaMinus):].strip ('\n'))
+                print alphaMinus
+                alphaMinus_vector.append (alphaMinus)
+            
+            if line [:len (prefixAlphaPlus)] == prefixAlphaPlus :
+                alphaPlus = float(line[len (prefixAlphaPlus):].strip ('\n'))
+                print alphaPlus
+                alphaPlus_vector.append (alphaPlus)
+            
+            try:
+                if line [:len (prefixAlphaInf)] == prefixAlphaInf :
+                    alphaInf = float(line[len (prefixAlphaInf):].strip ('\n'))
+                    print alphaInf
+                    alphaInf_vector.append (alphaInf)
+
+                if line [:len (prefixAlphaSup)] == prefixAlphaSup :
+                    alphaSup = float(line[len (prefixAlphaSup):].strip ('\n'))
+                    print alphaSup
+                    alphaSup_vector.append (alphaSup)
+            except:
+                print "second constraint failed"
+            
+    
+    return alphaMin_vector, alphaMax_vector, alphaMinus_vector, alphaPlus_vector, alphaInf_vector, alphaSup_vector, alphaInf4_vector

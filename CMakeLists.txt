@@ -46,6 +46,9 @@ install(FILES urdf/inclined_plane_3d.urdf
 install(FILES urdf/environment_3d.urdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
 
+install(FILES urdf/environment_3d_with_window.urdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
+
 install(FILES urdf/waterLily_envir.urdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
   

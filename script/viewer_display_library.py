@@ -10,6 +10,7 @@ import math
 Pi = math.pi
 
 # --------------------------------------------------------------------#
+
 # Normalize the dir part of the configuration (dir = direction of cone)
 ## Parameters:
 # q: given configuration
@@ -48,11 +49,11 @@ def plotPath (cl, nPath, r, lineNamePrefix, dt):
 # ampl: amplitude of the frame axis
 def plotFrame (r, lineNameSuffix, framePosition, ampl):
     x = framePosition [0]; y = framePosition [1]; z = framePosition [2];
-    r.client.gui.addLine("frame1"+lineNameSuffix,[x,y,z], [x+ampl,y,z],[0.7,0.7,0.7,1])
+    r.client.gui.addLine("frame1"+lineNameSuffix,[x,y,z], [x+ampl,y,z],[1,0,0,1])
     r.client.gui.addToGroup ("frame1"+lineNameSuffix, r.sceneName)
-    r.client.gui.addLine("frame2"+lineNameSuffix,[x,y,z], [x,y+ampl,z],[1,1,1,1])
+    r.client.gui.addLine("frame2"+lineNameSuffix,[x,y,z], [x,y+ampl,z],[0,1,0,1])
     r.client.gui.addToGroup ("frame2"+lineNameSuffix, r.sceneName)
-    r.client.gui.addLine("frame3"+lineNameSuffix,[x,y,z], [x,y,z+ampl],[1,1,1,1])
+    r.client.gui.addLine("frame3"+lineNameSuffix,[x,y,z], [x,y,z+ampl],[0,0,1,1])
     r.client.gui.addToGroup ("frame3"+lineNameSuffix, r.sceneName)
 
 # --------------------------------------------------------------------#
@@ -69,6 +70,21 @@ def plotVerticalConeWaypoints (cl, nPath, r, mu, ampl, lineNamePrefix):
     wp = cl.problem.getWaypoints (nPath)
     for i in np.arange(0, len(wp), 1):
         plotVerticalCone (wp[i], r, mu, ampl, lineNamePrefix)
+
+# --------------------------------------------------------------------#
+
+## Plot cone at each waypoint of the path ##
+## Parameters:
+# cl: corbaserver client
+# nPath: path number
+# r: viewer server
+# mu: cone coefficient of friction
+# ampl: cone amplitude
+# lineNamePrefix: string prefix used for line name
+def plotConeWaypoints (cl, nPath, r, mu, ampl, lineNamePrefix):
+    wp = cl.problem.getWaypoints (nPath)
+    for i in np.arange(0, len(wp), 1):
+        plotCone (wp[i], cl, r, mu, ampl, lineNamePrefix+str(i))
 
 # --------------------------------------------------------------------#
 
@@ -134,7 +150,6 @@ def plotCone (q, cl, r, mu, ampl, lineNamePrefix):
 def coneFunctionOne (x, y, U, V, W, mu, discrCone):
     z = (math.sqrt(discrCone) + U*W*x + V*W*y + U*W*mu**2*x + V*W*mu**2*y)/(U**2 + V**2 - W**2*mu**2)
     return z
-
 
 
 ## Cone function 2 ##

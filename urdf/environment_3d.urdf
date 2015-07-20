@@ -37,7 +37,7 @@
   <joint name="j_one" type="fixed">
     <parent link="obstacle_base"/>
     <child link="l_one"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <origin rpy="0 -0.1 0" xyz="0 0 0"/>
   </joint>
 
   <link name="l_one">
@@ -64,7 +64,7 @@
   <joint name="j_two" type="fixed">
     <parent link="obstacle_base"/>
     <child link="l_two"/>
-    <origin rpy="0 -0.2 0" xyz="-4 0 0"/>
+    <origin rpy="0.1 -0.2 0" xyz="-4 0 0"/>
   </joint>
 
   <link name="l_two">
@@ -118,7 +118,7 @@
   <joint name="j_four" type="fixed">
     <parent link="obstacle_base"/>
     <child link="l_four"/>
-    <origin rpy="0 -0.1 0" xyz="0 -4 0"/>
+    <origin rpy="-0.2 -0.1 0" xyz="0 -4.7 0"/>
   </joint>
 
   <link name="l_four">
@@ -145,7 +145,7 @@
   <joint name="j_fourfive" type="fixed">
     <parent link="obstacle_base"/>
     <child link="l_fourfive"/>
-    <origin rpy="0 0 0" xyz="0 4 0"/>
+    <origin rpy="-0.2 0.1 0" xyz="0 4 0"/>
   </joint>
 
   <link name="l_fourfive">
@@ -172,7 +172,7 @@
     <joint name="j_five" type="fixed">
     <parent link="obstacle_base"/>
     <child link="l_five"/>
-    <origin rpy="0 -0.4 0" xyz="4 4 0"/>
+    <origin rpy="0 -0.4 0" xyz="4.7 4 0"/>
   </joint>
 
   <link name="l_five">
@@ -226,7 +226,7 @@
   <joint name="j_seven" type="fixed">
     <parent link="obstacle_base"/>
     <child link="l_seven"/>
-    <origin rpy="0.6 -0.3 0" xyz="-4 4 0"/>
+    <origin rpy="0.6 -0.3 0.5" xyz="-4 4.7 0"/>
   </joint>
 
   <link name="l_seven">
@@ -253,7 +253,7 @@
   <joint name="j_eight" type="fixed">
     <parent link="obstacle_base"/>
     <child link="l_eight"/>
-    <origin rpy="-0.5 -0.5 0" xyz="-4 -4 0"/>
+    <origin rpy="-0.5 -0.5 -0.5" xyz="-4.8 -4.8 0"/>
   </joint>
 
   <link name="l_eight">
@@ -277,30 +277,4 @@
     </collision>
   </link>
   
-  <joint name="j_nine" type="fixed">
-    <parent link="obstacle_base"/>
-    <child link="l_nine"/>
-    <origin rpy="-0.5 -0.5 0" xyz="-4 -4 0"/>
-  </joint>
-
-  <link name="l_nine">
-    <inertial>
-      <origin xyz="0 0 0" /> 
-      <mass value="1.0" />
-      <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="1.0"  iyz="0.0"  izz="1.0" />
-    </inertial>
-    <visual>
-      <origin xyz="0 0 0"/>
-      <geometry>
-        <box size="4 4 6" />
-      </geometry>
-      <material name="Red"/>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0"/>
-      <geometry>
-        <box size="4 4 6" />
-      </geometry>
-    </collision>
-  </link>
 </robot>

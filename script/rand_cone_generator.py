@@ -32,23 +32,37 @@ q8 = shootNormPlot (cl, r, 0.5, 0.4, "c8")
 q9 = shootNormPlot (cl, r, 0.5, 0.4, "c9")
 
 plotThetaPlane (q1, q2, r, "ThetaPlane2")
+r.client.gui.removeFromGroup ("ThetaPlane2", r.sceneName)
+r.client.gui.removeFromGroup ("ThetaPlane2"+"bis", r.sceneName)
+
 plotThetaPlane (q1, q3, r, "ThetaPlane3")
+r.client.gui.removeFromGroup ("ThetaPlane3", r.sceneName)
+r.client.gui.removeFromGroup ("ThetaPlane3"+"bis", r.sceneName)
+
 plotThetaPlane (q1, q4, r, "ThetaPlane4")
+r.client.gui.removeFromGroup ("ThetaPlane4", r.sceneName)
+r.client.gui.removeFromGroup ("ThetaPlane4"+"bis", r.sceneName)
+
 plotThetaPlane (q1, q5, r, "ThetaPlane5")
 plotThetaPlane (q1, q6, r, "ThetaPlane6")
 
 
+
 # Select impact config
-q = q3[::]
+q = q4[::]
 
 ps.directPath (q1, q) # directly call the steering method
 
+tanTheta = (q [1] - q1 [1]) / (q [0] - q1 [0])
 
-num_log = 18623
-x_vector = []; zPlus_vector = []; zMinus_vector = [];
-configs = parseIntersectionConePlane (num_log, x_vector, zPlus_vector, zMinus_vector)
-plotStraightLine (vector, q1, r, "inter1")
+num_log = 26994
+configs, x_vector, zPlus_vector, zMinus_vector = parseIntersectionConePlane (num_log, '475: q: ', '476: x: ', '477: z_x_plus: ', '478: z_x_minus: ')
+plotStraightLine ([x_vector[0], x_vector[0]*tanTheta, zPlus_vector[0]], q1, r, "inter1")
+plotStraightLine ([x_vector[0], x_vector[0]*tanTheta, zMinus_vector[0]], q1, r, "inter2")
 
+
+plotStraightLine ([x_vector[1], x_vector[1]*tanTheta, zPlus_vector[1]], q, r, "inter3")
+plotStraightLine ([x_vector[1], x_vector[1]*tanTheta, zMinus_vector[1]], q, r, "inter4")
 
 r( ps.configAtParam(0,0.001) )
 ps.pathLength(0)
