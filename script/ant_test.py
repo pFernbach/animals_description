@@ -5,11 +5,10 @@
 from hpp.corbaserver.ant import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
-import time
 import numpy as np
 from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plotPath, plotVerticalConeWaypoints, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints
 
-robot = Robot ('ant')
+robot = Robot ('robot')
 robot.setJointBounds('base_joint_xyz', [-5, 5, -5, 5, -0.01, 3])
 ps = ProblemSolver (robot)
 cl = robot.client
@@ -19,13 +18,29 @@ cl = robot.client
 q11 = [1.781, 1.4, 1.3, 0, 0, 0, 1, 0, 0, 1]; #q22 = [0.8, -2.6, 2.35, 0, 0, 0, 1, 0, 0, 1]
 #q22 = [0.45, 1.4, 0.8, 0, 0, 0, 1, 0, 0, 1] # easier
 q22 = [0, 2, 0.23, 1, 0, 0, 0, 0, 0, 1] # under table
-r(q22)
+
+#cl.obstacle.loadObstacleModel('room_description','room','')
 
 from hpp.gepetto import Viewer, PathPlayer
 r = Viewer (ps)
 pp = PathPlayer (robot.client, r)
 r.loadObstacleModel ("room_description","room","room")
 r(q22)
+
+robot.isConfigValid(q11)
+cl.problem.generateValidConfig(2)
+
+
+qt = [2.0495390217629836, -1.8834072530719876, 1.1419356974733574, 0.2812471039601126, 0.09619100050038619, 0.8211573683900153, -0.4871836761177133, -0.919918, 0.0424716, 0.389805]
+qtest = [2.04954, -1.88341, 1.14194, 0.906174, 0.136197, 0.0465817, 0.397655, -0.919918, 0.0424716, 0.389805]
+
+index = cl.robot.getConfigSize () - 3
+
+
+plotStraightLine ([-0.919918,0.0424716,0.389805], [2.0495390217629836, -1.8834072530719876, 1.1419356974733574, 0.2812471039601126, 0.09619100050038619, 0.8211573683900153, -0.4871836761177133, -0.919918, 0.0424716, 0.389805], r, "normale1")
+
+#
+
 
 q1 = cl.robot.projectOnObstacle (q11, 3); q2 = cl.robot.projectOnObstacle (q22, 3)
 r(q2)

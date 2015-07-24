@@ -2,7 +2,8 @@
 # Script which goes with animals_description package.
 # Easy way to test parabola-planning algo (no internal DoF) on SO3 joint.
 
-from hpp.corbaserver.sphere import Robot
+#from hpp.corbaserver.sphere import Robot
+from hpp.corbaserver.ant import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
 from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plotPath, plotVerticalConeWaypoints, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints
