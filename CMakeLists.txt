@@ -110,43 +110,35 @@ install(FILES meshes/Granite_483_x_384_px_levadia.jpg
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)  # texture stones
 
 
- # robots URDF - SRDF - DAE
-install(FILES urdf/rabbit.urdf
+ # URDF - SRDF - DAE
+install(FILES
+  urdf/ant.urdf
+  urdf/sphere.urdf
+  urdf/ant_sphere.urdf
+  urdf/box.urdf
+  urdf/rabbit.urdf
+  urdf/cave.urdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
   )
-install(FILES srdf/rabbit.srdf 
+
+install(FILES
+  srdf/ant.srdf
+  srdf/sphere.srdf
+  srdf/ant_sphere.srdf
+  srdf/box.srdf
+  srdf/rabbit.srdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/srdf
   )
-install(FILES meshes/rabbit.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
-  )
-install(FILES meshes/rabbit1.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
-  )
-  
-install(FILES urdf/ant.urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
-  )
-install(FILES srdf/ant.srdf 
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/srdf
-  )
-install(FILES meshes/ant.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
-  )
-install(FILES meshes/ant_black.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
-  )
-install(FILES meshes/ant_texture.jpg
+install(FILES
+  meshes/ant.dae
+  meshes/ant_black.dae
+  meshes/ant_texture.jpg
+  meshes/rabbit.dae
+  meshes/rabbit1.dae
+  meshes/cave.dae
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
   )
 
-install(FILES urdf/sphere.urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
-  )
-install(FILES srdf/sphere.srdf 
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/srdf
-  )
-  
 install (FILES
   src/hpp/corbaserver/rabbit/robot.py
   src/hpp/corbaserver/rabbit/__init__.py
@@ -161,5 +153,14 @@ install (FILES
   src/hpp/corbaserver/sphere/robot.py
   src/hpp/corbaserver/sphere/__init__.py
   DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/sphere)
- 
+
+install (FILES
+  src/hpp/corbaserver/ant_sphere/robot.py
+  src/hpp/corbaserver/ant_sphere/__init__.py
+  DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/ant_sphere)
+
+install (FILES
+  src/hpp/corbaserver/box/robot.py
+  src/hpp/corbaserver/box/__init__.py
+  DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/box)
 SETUP_PROJECT_FINALIZE()

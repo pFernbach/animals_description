@@ -1,72 +1,64 @@
 #/usr/bin/env python
-# Script which goes with animals_description package.
+# Script which goes with animals_description or room_description package.
 # Easy way to test planning algo (no internal DoF) on SO3 joint.
 
-from hpp.corbaserver.ant import Robot
+#from hpp.corbaserver.ant import Robot
+from hpp.corbaserver.ant_sphere import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
 import numpy as np
 from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plotPath, plotVerticalConeWaypoints, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints
+from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
 
 robot = Robot ('robot')
-robot.setJointBounds('base_joint_xyz', [-5, 5, -5, 5, -0.01, 3])
+#robot.setJointBounds('base_joint_xyz', [-6, 6, -14, 20, -8, 10]) # cave
+robot.setJointBounds('base_joint_xyz', [-3, 3, -14, -1, -3, 3]) # cave (easier)
 ps = ProblemSolver (robot)
 cl = robot.client
-
-# Configs : [x, y, z, rz, ry, rx, (gamma)]
-#q11 = [0, -1, 0.002, 0, 0, 0, 0, 0, 1]; #q22 = [-0.1, 1.75, 0.302, 1.57, 0, 0, 0, 0, 1]
-q11 = [1.781, 1.4, 1.3, 0, 0, 0, 1, 0, 0, 1]; #q22 = [0.8, -2.6, 2.35, 0, 0, 0, 1, 0, 0, 1]
-#q22 = [0.45, 1.4, 0.8, 0, 0, 0, 1, 0, 0, 1] # easier
-q22 = [0, 2, 0.23, 1, 0, 0, 0, 0, 0, 1] # under table
-
-#cl.obstacle.loadObstacleModel('room_description','room','')
 
 from hpp.gepetto import Viewer, PathPlayer
 r = Viewer (ps)
 pp = PathPlayer (robot.client, r)
-r.loadObstacleModel ("room_description","room","room")
+r.loadObstacleModel ("animals_description","cave","cave")
+#cl.obstacle.loadObstacleModel('animals_description','cave','cave')
+
+# Configs : [x, y, z, qw, qx, qy, qz, nx, ny, nz, theta]
+q11 = [0, -13, -2, 1, 0, 0, 0, 0, 0, 1, 0] # cave entry
+q22 = [-0.4, -3, -0.7, 1, 0, 0, 0, 0, 0, 1, 0] # cave middle (easier...)
+#q22 = [-0.18, 3.5, -0.11, 1, 0, 0, 0, 0, 0, 1, 0] # cave middle
+#q22 = [-1.8, 17, 17, 1, 0, 0, 0, 0, 0, 1, 0] # cave top
+#q22 = [-1.5, 2, 0.31, 1, 0, 0, 0, 0, 0, 1, 0] # on floor
 r(q22)
 
-robot.isConfigValid(q11)
-cl.problem.generateValidConfig(2)
-
-
-qt = [2.0495390217629836, -1.8834072530719876, 1.1419356974733574, 0.2812471039601126, 0.09619100050038619, 0.8211573683900153, -0.4871836761177133, -0.919918, 0.0424716, 0.389805]
-qtest = [2.04954, -1.88341, 1.14194, 0.906174, 0.136197, 0.0465817, 0.397655, -0.919918, 0.0424716, 0.389805]
-
-index = cl.robot.getConfigSize () - 3
-
-
-plotStraightLine ([-0.919918,0.0424716,0.389805], [2.0495390217629836, -1.8834072530719876, 1.1419356974733574, 0.2812471039601126, 0.09619100050038619, 0.8211573683900153, -0.4871836761177133, -0.919918, 0.0424716, 0.389805], r, "normale1")
-
-#
-
-
-q1 = cl.robot.projectOnObstacle (q11, 3); q2 = cl.robot.projectOnObstacle (q22, 3)
+q1 = cl.robot.projectOnObstacle (q11, 3, 0.02)
+robot.isConfigValid(q1)
+q2 = cl.robot.projectOnObstacle (q22, 3, 0.06)
+robot.isConfigValid(q2)
 r(q2)
 
 ps.setInitialConfig (q1); ps.addGoalConfig (q2); ps.solve ()
 
-# Load box obstacle in HPP for collision avoidance
-#cl.obstacle.loadObstacleModel('puzzle_description','decor_very_easy','')
+# split -l 2000000 journal.12197.log
+
+ps.resetGoalConfigs ()
 
 
-q22 = [0, 2, 0.23, 1, 0, 0, 0, 0, 0, 1]
-r(q22)
-q2 = cl.robot.projectOnObstacle (q22, 3)
-r(q2)
+index = cl.robot.getConfigSize () - 4
+q = q2[::]
+plotStraightLine ([q[index], q[index+1], q[index+2]], q, r, "normale")
+plotCone (q1, cl, r, 0.5, 0.2, "cone1")
 
-r([1.9055415039823447, 1.4001395451251157, 0.3000000121119993, 0.0, 0.02517383406203692, 0.9996830888205736, 2.1849954283811942e-06, 0.9996830888205736, 0.02517383406203692, 2.1849954283811942e-06])
 
-r([1.9055415039823447, 1.4001395451251157, 0.3000000121119993, 0, 0, 0.707, 0.707, 0.9996830888205736, 0.02517383406203692, 2.1849954283811942e-06])
-
-r( ps.configAtParam(0,2) )
+r(ps.configAtParam(0,2))
 ps.pathLength(0)
 ps.getWaypoints (0)
 
-plotPath (cl, 0, r, "pathy", 0.1)
+cl.problem.generateValidConfig(2)
+
+plotPath (cl, 0, r, "pathy", 0.1) # time-step should depend on sub-path length ?
 
 plotFrame (r, "framy", [0,0,1], 0.5)
+plotThetaPlane (qt1, qt2, r, "ThetaPlane2")
 
 r.startCapture ("capture","png")
 pp(1)
@@ -89,49 +81,70 @@ robot.getJointNames ()
 robot.getConfigSize ()
 
 
+qt1 = [0.11844751003683414, 3.187439275561228, 0.5110408998245528, 0.05105927086189454, -0.03984712928298416, 0.9793629247909962, -0.1914508257798393, 0.11526864531036812, -0.3709305506445321, -0.9214790643345386]
+
+plotStraightLine ([0.11526864531036812, -0.3709305506445321, -0.9214790643345386], [0.11844751003683414, 3.187439275561228, 0.5110408998245528, 0.05105927086189454, -0.03984712928298416, 0.9793629247909962, -0.1914508257798393, 0.11526864531036812, -0.3709305506445321, -0.9214790643345386], r, "normale1")
+
+plotCone ([0.11844751003683414, 3.187439275561228, 0.5110408998245528, 0.05105927086189454, -0.03984712928298416, 0.9793629247909962, -0.1914508257798393, 0.11526864531036812, -0.3709305506445321, -0.9214790643345386], cl, r, 0.5, 0.4, "c1")
+
+qt2 = [0.21488429128778605, 3.2997394431239395, -0.16451500741630581, 0.8504991679459113, -0.07690347149493239, -0.2167831950901335, -0.47301381345776133, -0.295995045457713, 0.335895568643468, 0.8941818047970825]
+
+plotStraightLine ([-0.295995045457713, 0.335895568643468, 0.8941818047970825], [0.21488429128778605, 3.2997394431239395, -0.16451500741630581, 0.8504991679459113, -0.07690347149493239, -0.2167831950901335, -0.47301381345776133, -0.295995045457713, 0.335895568643468, 0.8941818047970825], r, "normale2")
+
+plotCone ([0.21488429128778605, 3.2997394431239395, -0.16451500741630581, 0.8504991679459113, -0.07690347149493239, -0.2167831950901335, -0.47301381345776133, -0.295995045457713, 0.335895568643468, 0.8941818047970825], cl, r, 0.5, 0.4, "c2")
 
 
- :38: q_init: 1.80959,1.23596,1.05975,0,0,0,0.349229,-0.0687689,0.93451,
- :39: q_goal: 0.8,-2.6,2.33838,0,0,0,0,0,1,
- :41: g_: 9.81 , mu_: 0.5 , V0max: 10
- :220: x_0: 1.80959
- :221: y_0: 1.23596
- :222: z_0: 1.05975
- :223: x_imp: 0.8
- :224: y_imp: -2.6
- :225: z_imp: 2.33838
- :226: X: -1.00959
- :227: Y: -3.83596
- :228: Z: 1.27863
- :229: theta: -1.82815
- :230: x_theta_0: -1.65584
- :231: X_theta: 3.96659
- :232: phi: 0.463648
- :453: discr: 1.4242
- :479: q: 1.80959,1.23596,1.05975,0,0,0,0.349229,-0.0687689,0.93451,
- :480: x_plus: -1
- :481: x_minus: 1
- :482: z_x_plus: 14.1441
- :483: z_x_minus: 11.9021
- :493: cos(2*delta): 0.83106
- :246: delta1: 0.294893
- :261: delta2: 0.463648
- :268: gamma_0: 0.0239473
- :269: gamma_imp: 0
- :280: corrected gamma_imp: 0
- :285: alpha_0_min: 1.29985
- :286: alpha_0_max: 1.88964
- :290: alpha_inf4: 0.311833
- :294: alpha_imp_min: -2.03444
- :295: alpha_imp_max: -1.10715
- :302: alpha_lim_plus: 1.35476
- :303: alpha_lim_minus: 0.527865
- :317: alpha_imp_inf: 1.2093
- :318: alpha_imp_sup: -0.93512
- :341: alpha_inf_bound: 1.29985
- :342: alpha_sup_bound: 1.35476
- :352: alpha: 1.32731
- :358: V0: 9.50747
- :368: coefs: -0.93358 0.933765  5.16561 -1.82815  -5.6396
- :570: length = 4.27767
+
+ps.setInitialConfig (qt1); ps.addGoalConfig (qt2); ps.solve ()
+
+ texcoord="UVMap"
+<instance_material symbol="stone14-material" target="#stone14-material">
+  <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+</instance_material>
+
+
+tanTheta = (qt2 [1] - qt1 [1]) / (qt2 [0] - qt1 [0])
+num_log = 7795
+line = 517 # "q: ..." line
+configs, xPlus_vector, xMinus_vector, zPlus_vector, zMinus_vector = parseIntersectionConePlane (num_log, str(line)+': q: ', str(line+1)+': x_plus: ', str(line+2)+': x_minus: ', str(line+3)+': z_x_plus: ', str(line+4)+': z_x_minus: ')
+i = 0
+plotStraightLine ([xPlus_vector[i], xPlus_vector[i]*tanTheta, zPlus_vector[i]], qt1, r, "inter1")
+plotStraightLine ([xMinus_vector[i], xMinus_vector[i]*tanTheta, zMinus_vector[i]], qt1, r, "inter2")
+
+i = 1
+plotStraightLine ([xPlus_vector[i], xPlus_vector[i]*tanTheta, zPlus_vector[i]], qt2, r, "inter3")
+plotStraightLine ([xMinus_vector[i], xMinus_vector[i]*tanTheta, zMinus_vector[i]], qt2, r, "inter4")
+
+# chemin arrivée foireuse: respecte pas 3ème contrainte:
+
+qt1 = [-0.015348906975285266, -4.171305044110657, -0.9392091187458651, 0.9315152701322247, 0.1552333289221375, 0.03148397146866394, -0.32739986964383516, -0.0429911429320373, -0.30982012895828037, 0.9498227462646237]
+
+plotStraightLine ([-0.0429911429320373, -0.30982012895828037, 0.9498227462646237], qt1, r, "normale33")
+
+plotCone (qt1, cl, r, 0.5, 0.3, "c33")
+
+qt2 = [-0.43304741448409084, -4.349158016911722, 0.9838203122978445, -0.11403063817687004, 0.59745220847309, 0.7873253003678657, -0.10083027099166687, -0.30004094907731027, -0.022516733564641164, -0.9536605400174454]
+
+plotStraightLine ([-0.30004094907731027, -0.022516733564641164, -0.9536605400174454], qt2, r, "normale3")
+
+plotCone (qt2, cl, r, 0.5, 0.3, "c3")
+
+qt1 = [-0.015348906975285266, -4.171305044110657, -0.9392091187458651, 0.9315152701322247, 0.1552333289221375, 0.03148397146866394, -0.32739986964383516, -0.0429911429320373, -0.30982012895828037, 0.9498227462646237]
+qt2 = [-0.43304741448409084, -4.349158016911722, 0.9838203122978445, -0.11403063817687004, 0.59745220847309, 0.7873253003678657, -0.10083027099166687, -0.30004094907731027, -0.022516733564641164, -0.9536605400174454]
+ps.setInitialConfig (qt1); ps.addGoalConfig (qt2); ps.solve ()
+
+## 2D Plot tools ##
+
+import matplotlib.pyplot as plt
+theta = math.atan2((qt2 [1] - qt1 [1]) , (qt2 [0] - qt1 [0]))
+index = cl.robot.getConfigSize () - 3
+NconeOne = [qt1 [index]*math.cos(theta) + qt1 [index+1]*math.sin(theta), qt1 [index+2]]
+pointsConeOne = [qt1 [0]*math.cos(theta) + qt1 [1]*math.sin(theta), qt1 [2], xPlus_vector[0]*math.cos(theta) + xPlus_vector[0]*tanTheta*math.sin(theta), zPlus_vector[0], xMinus_vector[0]*math.cos(theta) + xMinus_vector[0]*tanTheta*math.sin(theta), zMinus_vector[0]]
+
+NconeTwo = [qt2 [index]*math.cos(theta) + qt2 [index+1]*math.sin(theta), qt2 [index+2]]
+pointsConeTwo = [qt2 [0]*math.cos(theta) + qt2 [1]*math.sin(theta), qt2 [2], xPlus_vector[1]*math.cos(theta) + xPlus_vector[1]*tanTheta*math.sin(theta), zPlus_vector[1], xMinus_vector[1]*math.cos(theta) + xMinus_vector[1]*tanTheta*math.sin(theta), zMinus_vector[1]]
+
+parabPlotDoubleProjCones (cl, 0, theta, NconeOne, pointsConeOne, NconeTwo, pointsConeTwo, plt)
+
+plt.show()
 

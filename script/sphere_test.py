@@ -2,8 +2,7 @@
 # Script which goes with animals_description package.
 # Easy way to test parabola-planning algo (no internal DoF) on SO3 joint.
 
-#from hpp.corbaserver.sphere import Robot
-from hpp.corbaserver.ant import Robot
+from hpp.corbaserver.sphere import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
 from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plotPath, plotVerticalConeWaypoints, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints
@@ -42,7 +41,7 @@ q1 = cl.robot.projectOnObstacle (q11, 3); q2 = cl.robot.projectOnObstacle (q22, 
 ps.setInitialConfig (q1); ps.addGoalConfig (q2); ps.solve ()
 
 
-r( ps.configAtParam(0,0.001) )
+r(ps.configAtParam(0,0.001))
 ps.pathLength(0)
 ps.getWaypoints (0)
 
@@ -52,7 +51,7 @@ ps.getWaypoints (0)
 q0 = [0, 0, 5, 0, 0, 0, 1, 0, 0, 1];
 r(q0)
 
-plotPath (cl, 0, r, "path", 0.4)
+plotPath (cl, 0, r, "pathy", 0.1)
 
 plotThetaPlane (q1, q2, r, "ThetaPlane2")
 

@@ -26,9 +26,9 @@ Pi = math.pi
 # pointsConeTwo: points defining the intersection of second cone with plane_theta, already expressed in plane_theta coordinates
 # plt: matplotlib window
 def parabPlotDoubleProjCones (cl, nPath, theta, NconeOne, pointsConeOne, NconeTwo, pointsConeTwo, plt):
-    init = cl.problem.getInitialConfig ()
-    goal = cl.problem.getGoalConfigs ()[0] # first goal
-    
+    #init = cl.problem.getInitialConfig ()
+    #goal = cl.problem.getGoalConfigs ()[0] # first goal
+    """
     # Plot whole projected path
     for t in np.arange(0., cl.problem.pathLength(nPath), dt):
         x = cl.problem.configAtParam(nPath, t)[0]
@@ -39,7 +39,7 @@ def parabPlotDoubleProjCones (cl, nPath, theta, NconeOne, pointsConeOne, NconeTw
         dx_theta = dx*math.cos(theta) + dy*math.sin(theta)
         plt.plot([x_theta, dx_theta], [cl.problem.configAtParam(nPath, t)[2], \
                      cl.problem.configAtParam(nPath, t+dt)[2]], 'b', linewidth=1.2)
-    
+    """
     # Plot first cone (here x values are already projected on planeTheta)
     xOrigin = pointsConeOne [0]; zOrigin = pointsConeOne [1]
     xPlus = pointsConeOne [2]; zPlus = pointsConeOne [3]

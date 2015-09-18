@@ -119,7 +119,7 @@ def plotVerticalCone (q, r, mu, ampl, lineNamePrefix):
 # ampl: cone amplitude
 # lineNamePrefix: string prefix used for line name
 def plotCone (q, cl, r, mu, ampl, lineNamePrefix):
-    index = cl.robot.getConfigSize () - 3
+    index = cl.robot.getConfigSize () - 4
     phi = math.atan(mu)
     x0 = q[0]
     y0 = q[1]
@@ -189,10 +189,10 @@ def plotStraightLine (vector, q, r, lineNamePrefix):
 # r : viewer server
 # lineNamePrefix: string prefix used for line name
 def plotThetaPlane (q1, q2, r, lineNamePrefix):
-    pos1 = [q1 [0], q1 [1], q1 [2]+2]
-    pos2 = [q2 [0], q2 [1], q2 [2]-2]
-    pos3 = [q1 [0], q1 [1], q1 [2]-2]
-    pos4 = [q2 [0], q2 [1], q2 [2]+2]
+    pos1 = [q1 [0], q1 [1], q1 [2]+5]
+    pos2 = [q2 [0], q2 [1], q2 [2]-5]
+    pos3 = [q1 [0], q1 [1], q1 [2]-5]
+    pos4 = [q2 [0], q2 [1], q2 [2]+5]
     r.client.gui.addSquareFace (lineNamePrefix, pos1, pos2, pos4, pos4, [0.7,0.2,0.2,0.5])
     r.client.gui.addToGroup (lineNamePrefix, r.sceneName)
     lineNamePrefix_bis = lineNamePrefix+"bis"
@@ -213,7 +213,7 @@ def shootNormPlot (cl, r, mu, ampl, lineNamePrefix):
     print q
     q = normalizeDir (q, cl.robot)
     plotCone (q, cl, r, mu, ampl, lineNamePrefix)
-    index = cl.robot.getConfigSize () - 3
+    index = cl.robot.getConfigSize () - 4
     plotStraightLine ([q [index],q [index+1],q [index+2]], q, r, lineNamePrefix+"normale")
     return q
 
