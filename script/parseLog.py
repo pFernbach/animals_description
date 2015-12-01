@@ -3,10 +3,33 @@
 import numpy as np
 
 logFile = "/local/mcampana/devel/hpp/install/var/log/hpp/"
-endWhile = "INFO:/local/mcampana/devel/hpp/src/hpp-core/src/potential-method.cc:37: finalPath:"
+
+# --------------------------------------------------------------------#
 
 # Parse configurations of given path, until the endWhile line is reached.
 def parseConfig (pid, prefix):
+    l = len (prefix)
+    with open (logFile + "journal." + str(pid) + ".log") as f:
+        configs = []
+        for line in f:
+            if line [:l] == prefix:
+                suffix = line [l:]
+                st = suffix.strip (',\n') # remove end characters
+                sp = st.split (',') # separate numbers with coma
+                try:
+                    config = map (float, sp) # convert into float
+                    configs.append (config)
+                    
+                except:
+                    print ("st=%s"%st)
+                    print ("sp=%s"%sp)
+    return np.array (configs) # transpose and make array
+
+# --------------------------------------------------------------------#
+
+endWhile = "INFO:/local/mcampana/devel/hpp/src/hpp-core/src/potential-method.cc:37: finalPath:"
+# Parse configurations of given path, until the endWhile line is reached.
+def parseConfigWhile (pid, prefix):
     l = len (prefix)
     lend = len(endWhile)
     isNotFinished = True

@@ -33,111 +33,41 @@ ADD_REQUIRED_DEPENDENCY ("hpp-corbaserver >= 3")
 SET(CATKIN_PACKAGE_SHARE_DESTINATION
   ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
 
- # environment URDF - DAE - textures
-install(FILES urdf/multiple_planes_3d.urdf
+ # environments URDF
+install(FILES
+  urdf/multiple_planes_3d.urdf
+  urdf/plane_3d.urdf
+  urdf/inclined_plane_3d.urdf
+  urdf/environment_3d.urdf
+  urdf/environment_3d_with_window.urdf
+  urdf/waterLily_envir.urdf
+  urdf/cave.urdf
+  urdf/scene_jump.urdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
 
-install(FILES urdf/plane_3d.urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
-
-install(FILES urdf/inclined_plane_3d.urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
-
-install(FILES urdf/environment_3d.urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
-
-install(FILES urdf/environment_3d_with_window.urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
-
-install(FILES urdf/waterLily_envir.urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
-  
-install(FILES meshes/waterLily2.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
-  
-install(FILES meshes/SuirenT.bmp
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes) # texture waterlily
-  
-install(FILES meshes/arbre.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
-  
-install(FILES meshes/bark_000.bmp
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes) # texture arbre
-
-install(FILES meshes/DL2X2_00.bmp
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes) # texture arbre
-
-install(FILES meshes/wood_stack.dae
+# install all files contained in meshes
+install(DIRECTORY meshes/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
 
-install(FILES meshes/8wood.jpg
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
-
-install(FILES meshes/bush.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
-
-install(FILES meshes/etang.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
-
-install(FILES meshes/etang2.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
-  
-install(FILES meshes/Stone_3872_x_2592_px_0606.jpg
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes) # texture pond stones
-
-install(FILES meshes/Stone_3000_x_2250_px_050613.jpg
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes) # texture pond stones
-
-install(FILES meshes/grass.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
-
-install(FILES meshes/stones2.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
-  
-install(FILES meshes/stones3.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
-
-install(FILES meshes/Marble_900_x_634_px_mfr_14.jpg
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)  # texture stones
-
-install(FILES meshes/1.jpg
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)  # texture stones
-
-install(FILES meshes/Stone_2240_x_1680_px_0706.jpg
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)  # texture stones
-
-install(FILES meshes/Granite_483_x_384_px_levadia.jpg
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)  # texture stones
-
-
- # URDF - SRDF - DAE
+ # robots URDF
 install(FILES
   urdf/ant.urdf
   urdf/sphere.urdf
   urdf/ant_sphere.urdf
   urdf/box.urdf
   urdf/rabbit.urdf
-  urdf/cave.urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
-  )
+  urdf/friction_cone.urdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
 
+ # robots SRDF
 install(FILES
   srdf/ant.srdf
   srdf/sphere.srdf
   srdf/ant_sphere.srdf
   srdf/box.srdf
   srdf/rabbit.srdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/srdf
-  )
-install(FILES
-  meshes/ant.dae
-  meshes/ant_black.dae
-  meshes/ant_texture.jpg
-  meshes/rabbit.dae
-  meshes/rabbit1.dae
-  meshes/cave.dae
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
-  )
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/srdf)
+
 
 install (FILES
   src/hpp/corbaserver/rabbit/robot.py

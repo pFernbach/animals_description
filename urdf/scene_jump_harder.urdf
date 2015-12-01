@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot name="object">
-  <link name="base_link">
+  <link name="base_link"> <!-- required name-->
     <inertial>
       <origin xyz="0 0 0" /> 
       <mass value="1.0" />
@@ -9,16 +9,13 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-        <sphere radius="0.2"/>
+        <mesh filename="package://animals_description/meshes/scene_jump5.dae"/>
       </geometry>
-      <material name="green">
-            <color rgba="0 1 0 1"/>
-      </material>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
       <geometry>
-        <sphere radius="0.2"/>
+        <mesh filename="package://animals_description/meshes/scene_jump5.dae"/>
       </geometry>
     </collision>
   </link>

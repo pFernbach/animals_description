@@ -2,77 +2,110 @@
 # Script which goes with animals_description package.
 # Easy way to test parabola-planning algo (no internal DoF) on SO3 joint.
 
-#from hpp.corbaserver.sphere import Robot
+from hpp.corbaserver.sphere import Robot
 #from hpp.corbaserver.ant import Robot
-from hpp.corbaserver.ant_sphere import Robot
+#from hpp.corbaserver.ant_sphere import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
 from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plotPath, plotVerticalConeWaypoints, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath
-from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
+from parseLog import parseConfig, parseNodes, parseIntersectionConePlane, parseAlphaAngles
 from parabola_plot_tools import parabPlotDoubleProjCones, parabPlotOriginCones
 import math
 import numpy as np
 
 robot = Robot ('robot')
-robot.setJointBounds('base_joint_xyz', [-3.9, 3.9, -3.9, 3.9, 1, 12]) # plane
-#robot.setJointBounds('base_joint_xyz', [-6, 6, -6, 6, 2, 9]) # environment_3d
+#robot.setJointBounds('base_joint_xyz', [-6, 6.7, -4, 4, 0, 8]) # ultimate goal!
+#robot.setJointBounds('base_joint_xyz', [1.6, 6.7, -2.2, 1.5, 0, 3]) # first goal
+#robot.setJointBounds('base_joint_xyz', [-0.3, 6.7, -2.2, 2.4, 0, 3]) # second goal
+#robot.setJointBounds('base_joint_xyz', [-2.6, 6.7, -2.2, 2.4, 0, 3]) # third goal
+#robot.setJointBounds('base_joint_xyz', [-6, -2, -2, 3, 0, 8]) # bottom to ultimate
+#robot.setJointBounds('base_joint_xyz', [-5, -2.2, -0.1, 2.8, 0, 6]) # bottom to middle column
+robot.setJointBounds('base_joint_xyz', [-5, -2.2, -0.1, 2.8, 0, 3]) # bottom to bottom 1
+
 ps = ProblemSolver (robot)
 cl = robot.client
 #cl.obstacle.loadObstacleModel('animals_description','inclined_plane_3d','inclined_plane_3d')
 
-# Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
-#q1 = [-1.5, -1.5, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]; q2 = [2.6, 3.7, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]
-#q11 = [2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0] # plane with theta = Pi
-q11 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [2.5, 2.7, 8, 0, 0, 0, 1, 0, 0, 1, 0] # plane with theta ~= 0
-#q11 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [2.5, 2.7, 9, 0, 0, 0, 1, 0, 0, 1, 0] # multiple-planes (3 planes)
-#q11 = [-5, 3.1, 4.2, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [5.2, -5.2, 4, 0, 0, 0, 1, 0, 0, 1, 0] # environment_3d
-#r(q22)
-
 from hpp.gepetto import Viewer, PathPlayer
 r = Viewer (ps)
 pp = PathPlayer (robot.client, r)
-#r.loadObstacleModel ("animals_description","plane_3d","plane_3d")
-#r.loadObstacleModel ("animals_description","multiple_planes_3d","multiple_planes_3d")
-r.loadObstacleModel ("animals_description","inclined_plane_3d","inclined_plane_3d")
-#r.loadObstacleModel ("animals_description","environment_3d","environment_3d")
-#r.loadObstacleModel ("animals_description","environment_3d_with_window","environment_3d_with_window")
+r.loadObstacleModel ("animals_description","scene_jump_harder","scene_jump_harder")
+
+# Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
+#q11 = [5.7, 1, 0.5, 0, 0, 0, 1, 0, 0, 1, 0]
+q11 = [-3.5, 1.7, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # bottom of column
 r(q11)
+#q22 = [2.6, -1.4, 0.35, 0, 0, 0, 1, 0, 0, 1, 0] # first goal
+#q22 = [0.7, 1.55, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # second goal
+#q22 = [-1.7, -1.5, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # third goal
+#q22 = [-3.3, 1.5, 3.4, 0, 0, 0, 1, 0, 0, 1, 0] # in column
+q22 = [-4.2, 0.9, 1.7, 0, 0, 0, 1, 0, 0, 1, 0] # bottom 1 of column
+#q22 = [-4.4, 0.9, 4.1, 0, 0, 0, 1, 0, 0, 1, 0] # bottom 3 of column
+r(q22)
+#q22 = [-4.4, -1.6, 6.5, 0, 0, 0, 1, 0, 0, 1, 0] # ultimate goal!
+
+#q = 
+q = [-4.4, 0.9, 4.1, 0, 0, 0, 1, 0, 0, 1, 0]
+r(q)
+r(cl.robot.projectOnObstacle (q, 0.02))
 
 q1 = cl.robot.projectOnObstacle (q11, 0.02); q2 = cl.robot.projectOnObstacle (q22, 0.02)
 
-ps.setInitialConfig (q1); ps.addGoalConfig (q2); ps.solve ()
+ps.setInitialConfig (q1); ps.addGoalConfig (q2)
+ps.solve ()
+
+samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0,1,1])
 
 
 #ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_envir3d_with_window.rdm')
 
 r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
 
-samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
 
 r(ps.configAtParam(0,0.001))
 ps.pathLength(0)
-ps.getWaypoints (0)
+wp = ps.getWaypoints (0)
+
+# Get projected random configs and display them
+from parseLog import parseConfig
+num_log = 21301
+qrands = parseConfig(num_log,'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/parabola/parabola-planner.cc:157: q_proj: ')
+sphereNamePrefix="qrand_sphere_"; i = 0
+for qrand in qrands:
+    sphereName = sphereNamePrefix+str(i)
+    r.client.gui.addSphere (sphereName,0.1,[0.8,0.1,0.1,1]) # red
+    r.client.gui.applyConfiguration (sphereName, [qrand[0],qrand[1],qrand[2],1,0,0,0])
+    r.client.gui.addToGroup (sphereName, r.sceneName)
+    i = i + 1
+
+r.client.gui.refresh ()
 
 
+# Plot a cone and rotate it!
+qCone = cl.robot.setOrientation (q2)
+coneName = "cone2"
+r.loadObstacleModel ("animals_description","friction_cone",coneName)
+r.client.gui.applyConfiguration (coneName, qCone[0:7])
+r.client.gui.refresh ()
+#r.client.gui.removeFromGroup (coneName, r.sceneName)
 
 ## 3D Plot tools ##
 q0 = [0, 0, 5, 0, 0, 0, 1, 0, 0, 1, 0];
 r(q0)
 
-plotFrame (r, "_", [0,0,4], 0.5)
+plotFrame (r, "frame", [0,0,0], 0.5)
 
 plotPath (cl, 0, r, "pathy", 0.1)
 
-plotThetaPlane (q1, q2, r, "ThetaPlane2")
+plotThetaPlane (q1, q2, r, "ThetaPlane")
+r.client.gui.removeFromGroup ("ThetaPlane", r.sceneName)
+r.client.gui.removeFromGroup ("ThetaPlanebis", r.sceneName)
 
 plotCone (q1, cl, r, 0.5, 0.4, "c1")
 plotCone (q2, cl, r, 0.5, 0.4, "c2")
 
 index = cl.robot.getConfigSize () - cl.robot.getExtraConfigSize ()
 q = qa[::]
-q = [-4.77862,-1.56995,2.87339,-0.416537,-0.469186,-0.619709,0.471511,-0.197677,-0.0998335,0.97517,0.619095]
-
-qprojCorba=[-4.778619492059025, -1.5699444231861588, 2.873387956706481, 0.9470998051218645, 0.017748399125124163, -0.10999926666084152, 0.3009769340010935, -0.19767685053184691, -0.0998334947491579, 0.9751703113251448, 0.619095]
 plotStraightLine ([q [index],q [index+1],q [index+2]], q, r, "normale2")
 
 plotConeWaypoints (cl, 0, r, 0.5, 0.4, "wpcones")
@@ -82,8 +115,8 @@ for i in np.arange(0, len(wp), 1):
 
 
 tanTheta = (q2 [1] - q1 [1]) / (q2 [0] - q1 [0])
-num_log = 22393
-configs, xPlus_vector, xMinus_vector, zPlus_vector, zMinus_vector = parseIntersectionConePlane (num_log, '479: q: ', '480: x_plus: ', '481: x_minus: ', '482: z_x_plus: ', '483: z_x_minus: ')
+num_log = 22010
+configs, xPlus_vector, xMinus_vector, zPlus_vector, zMinus_vector = parseIntersectionConePlane (num_log, '531: q: ', '532: x_plus: ', '533: x_minus: ', '534: z_x_plus: ', '535: z_x_minus: ')
 i = 0
 plotStraightLine ([xPlus_vector[i], xPlus_vector[i]*tanTheta, zPlus_vector[i]], q1, r, "inter1")
 plotStraightLine ([xMinus_vector[i], xMinus_vector[i]*tanTheta, zMinus_vector[i]], q1, r, "inter2")

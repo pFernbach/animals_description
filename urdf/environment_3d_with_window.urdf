@@ -333,13 +333,13 @@
     <visual>
       <origin xyz="0 -3 5"/>
       <geometry>
-        <box size="0.2 2 3" />
+        <box size="0.15 2 3" />
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 -3 5"/>
       <geometry>
-        <box size="0.2 2 3" />
+        <box size="0.15 2 3" />
       </geometry>
     </collision>
   </link>
@@ -355,13 +355,13 @@
     <visual>
       <origin xyz="0 3 5"/>
       <geometry>
-         <box size="0.2 2 3" />
+         <box size="0.15 2 3" />
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 3 5"/>
       <geometry>
-         <box size="0.2 2 3" />
+         <box size="0.15 2 3" />
       </geometry>
     </collision>
   </link>

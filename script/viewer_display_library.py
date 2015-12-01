@@ -165,13 +165,13 @@ def coneFunctionTwo (x, y, U, V, W, mu, discrCone):
 # Uses: plot cone direction or cone - plane_theta intersection
 ## Parameters:
 # vector: direction vector
-# q: current configuration (origin of straight line)
+# pos: origin-position of straight line
 # r: viewer server
 # lineNamePrefix: string prefix used for line name
-def plotStraightLine (vector, q, r, lineNamePrefix):
-    x0 = q[0]
-    y0 = q[1]
-    z0 = q[2]
+def plotStraightLine (vector, pos, r, lineNamePrefix):
+    x0 = pos[0]
+    y0 = pos[1]
+    z0 = pos[2]
     x = vector[0]
     y = vector[1]
     z = vector[2]
@@ -216,4 +216,25 @@ def shootNormPlot (cl, r, mu, ampl, lineNamePrefix):
     index = cl.robot.getConfigSize () - 4
     plotStraightLine ([q [index],q [index+1],q [index+2]], q, r, lineNamePrefix+"normale")
     return q
+
+# --------------------------------------------------------------------#
+
+## Plot path choosing the number of samples by subpath ##
+## Parameters:
+# cl: corbaserver client
+# r: viewer server
+# nPath: path number
+# NbPointsPerSubPath: number of sampled points per subpath (each parabola)
+# curvePrefix: string prefix used for curve name
+# curveColor: osg-color of the curve (e.g. [0,1,0,1])
+def plotSampleSubPath (cl, r, nPath, NbPointsPerSubPath, curvePrefix, curveColor):
+    plotSampleConfigs = cl.problem.sampleSubPath(nPath, NbPointsPerSubPath)
+    pointsCurv = []
+    for i in range(0, len(plotSampleConfigs)):
+        pointsCurv.append ([plotSampleConfigs [i][0], plotSampleConfigs [i][1], plotSampleConfigs [i][2]])
+    
+    r.client.gui.addCurve (curvePrefix, pointsCurv, curveColor)
+    r.client.gui.addToGroup (curvePrefix, r.sceneName)
+    return plotSampleConfigs
+
 

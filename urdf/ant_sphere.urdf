@@ -15,7 +15,7 @@
     <collision>
       <origin xyz="0 0 0"/>
       <geometry>
-        <sphere radius="0.108"/>
+        <sphere radius="0.11"/>
       </geometry>
     </collision>
   </link>
@@ -23,17 +23,17 @@
   <joint name="j_bounding_sphere" type="fixed">
     <parent link="base_link"/>
     <child link="l_bounding_sphere"/>
-    <origin xyz="0 0.009 0.03"/>
+    <origin xyz="0 0 0"/>
   </joint>
 
   <link name="l_bounding_sphere">
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-        <sphere radius="0.108"/>
+        <sphere radius="0.11"/>
       </geometry>
       <material name="green">
-            <color rgba="0 1 0 0.01"/>
+        <color rgba="0 1 0 0.1"/>
       </material>
     </visual>
   </link>

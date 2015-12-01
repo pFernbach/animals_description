@@ -1,5 +1,5 @@
 #/usr/bin/env python
-# Script which goes with animals_description or room_description package.
+# Script which goes with animals_description, with a dependency on room_description package.
 # Easy way to test planning algo (no internal DoF) on SO3 joint.
 
 from hpp.corbaserver.ant import Robot
@@ -11,42 +11,33 @@ from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plo
 from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
 
 robot = Robot ('robot')
-#robot.setJointBounds('base_joint_xyz', [-6, 6, -14, 20, -8, 10]) # cave
-robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -14, -1, -2.6, 2.6]) # cave (easier)
+robot.setJointBounds('base_joint_xyz', [-4, 4, -4, 4, -0.1, 3])
 ps = ProblemSolver (robot)
 cl = robot.client
 
 from hpp.gepetto import Viewer, PathPlayer
 r = Viewer (ps)
 pp = PathPlayer (robot.client, r)
-r.loadObstacleModel ("animals_description","cave","cave")
-#cl.obstacle.loadObstacleModel('animals_description','cave','cave')
+r.loadObstacleModel ("room_description","room_only_meshes","room_only_meshes")
+#cl.obstacle.loadObstacleModel('room_description','room_only_meshes','room_only_meshes')
 
 # Configs : [x, y, z, qw, qx, qy, qz, nx, ny, nz, theta]
-q11 = [0, -13, -2, 1, 0, 0, 0, 0, 0, 1, 0] # cave entry
-q22 = [-0.4, -3, -0.7, 1, 0, 0, 0, 0, 0, 1, 0] # cave middle (easier...)
-#q22 = [-0.18, 3.5, -0.11, 1, 0, 0, 0, 0, 0, 1, 0] # cave middle
-#q22 = [-1.8, 17, 17, 1, 0, 0, 0, 0, 0, 1, 0] # cave top
-#q22 = [-1.5, 2, 0.31, 1, 0, 0, 0, 0, 0, 1, 0] # on floor
+q11 = [1.781, 1.4, 1.3, 1, 0, 0, 0, 0, 0, 1, 0] # top of the armchair back
+q22 = [2.2, -2.5, 1.3, 1, 0, 0, 0, 0, 0, 1, 0] # above the desk ++ (sphere)
+q22 = [-2, 2.5, 0.3, 1, 0, 0, 0, 0, 0, 1, 0] # above the floor
 r(q22)
 
+#cl.problem.generateValidConfig(2)
 q1 = cl.robot.projectOnObstacle (q11, 0.02)
 robot.isConfigValid(q1)
-q2 = cl.robot.projectOnObstacle (q22, 0.06)
+q2 = cl.robot.projectOnObstacle (q22, 0.02)
 robot.isConfigValid(q2)
 r(q2)
 
 ps.setInitialConfig (q1); ps.addGoalConfig (q2); ps.solve ()
-
 #ps.resetGoalConfigs ()
-#ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_ant_in_cave1.rdm')
+#ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_ant_in_room1.rdm')
 
-
-qr1=[1.55746,-9.173,0.720294,-0.236625,0.381534,0.845472,0.289165,0.252814,0.358548,0.898626,0.339103]
-
-qr2=[-0.469073,-5.91563,-0.774315,-0.206245,0.66638,-0.360097,0.61946,0.950034,0.245797,0.192402,0.672105]
-
-qr3 = [-1.6241,-10.8368,-1.47441,0.368603,0.244858,0.522788,-0.728608,-0.907678,-0.00581859,-0.419626,-1.77024]
 
 samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
 wp = ps.getWaypoints (1)
@@ -56,7 +47,7 @@ r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
 r(ps.configAtParam(0,0.001))
 ps.pathLength(0)
 ps.getWaypoints (0) 
-r.client.gui.setVisibility('robot/l_bounding_sphere',"ON")
+
 
 ## 3D Plot tools ##
 q0 = [0, 0, 5, 0, 0, 0, 1, 0, 0, 1, 0];
@@ -77,16 +68,16 @@ q = q2[::]
 plotStraightLine ([q[index], q[index+1], q[index+2]], q, r, "normale")
 plotCone (q1, cl, r, 0.5, 0.2, "cone1")
 
-r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
+
+
+r(ps.configAtParam(0,2))
+ps.pathLength(0)
+ps.getWaypoints (0)
 
 
 
-# Add light to scene
-lightName = "li"
-r.client.gui.addLight (lightName, r.windowId, 0.001, [0.4,0.4,0.4,0.5])
-r.client.gui.addToGroup (lightName, r.sceneName)
-r.client.gui.applyConfiguration (lightName, [1,0,0,1,0,0,0])
-r.client.gui.refresh ()
+
+
 
 # --------------------------------------------------------------------#
 
