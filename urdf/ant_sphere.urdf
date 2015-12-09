@@ -9,7 +9,7 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://animals_description/meshes/ant_black.dae"/>
+        <mesh filename="package://animals_description/meshes/ant_black2.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -30,7 +30,7 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-        <sphere radius="0.11"/>
+        <sphere radius="0.13"/>
       </geometry>
       <material name="green">
         <color rgba="0 1 0 0.1"/>

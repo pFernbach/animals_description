@@ -25,21 +25,24 @@ r.loadObstacleModel ("room_description","room_only_meshes","room_only_meshes")
 q11 = [1.781, 1.4, 1.3, 1, 0, 0, 0, 0, 0, 1, 0] # top of the armchair back
 q22 = [2.2, -2.5, 1.3, 1, 0, 0, 0, 0, 0, 1, 0] # above the desk ++ (sphere)
 q22 = [-2, 2.5, 0.3, 1, 0, 0, 0, 0, 0, 1, 0] # above the floor
+q22 = [-0.2, 2, 0.3, 1, 0, 0, 0, 0, 0, 1, 0] # under the table
 r(q22)
 
 #cl.problem.generateValidConfig(2)
-q1 = cl.robot.projectOnObstacle (q11, 0.02)
+q1 = cl.robot.projectOnObstacle (q11, 0.01)
 robot.isConfigValid(q1)
-q2 = cl.robot.projectOnObstacle (q22, 0.02)
+q2 = cl.robot.projectOnObstacle (q22, 0.01)
 robot.isConfigValid(q2)
 r(q2)
 
-ps.setInitialConfig (q1); ps.addGoalConfig (q2); ps.solve ()
+ps.setInitialConfig (q1); ps.addGoalConfig (q2)
+ps.solve ()
+
+samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
+
 #ps.resetGoalConfigs ()
 #ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_ant_in_room1.rdm')
 
-
-samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
 wp = ps.getWaypoints (1)
 
 r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
@@ -75,6 +78,15 @@ ps.pathLength(0)
 ps.getWaypoints (0)
 
 
+## Plot all cone waypoints:
+#plotConeWaypoints (cl, 0, r, 0.5, 0.4, "wpcones")
+wp = cl.problem.getWaypoints (0)
+for i in np.arange(0, len(wp), 1):
+    qCone = cl.robot.setOrientation (wp[i])
+    coneName = "wp_cone_"+str(i)
+    r.loadObstacleModel ("animals_description","friction_cone",coneName)
+    r.client.gui.applyConfiguration (coneName, qCone[0:7])
+    r.client.gui.refresh ()
 
 
 
@@ -113,7 +125,8 @@ loadmotion('/local/mcampana/devel/hpp/videos/path2.txt') # and rename first node
 cl.obstacle.getObstaclePosition('decor_base')
 robot.getJointOuterObjects('base_joint_xyz')
 robot.isConfigValid(q1)
-robot.distancesToCollision()
+robot.setCurrentConfig(q3)
+res=robot.distancesToCollision()
 r( ps.configAtDistance(0,5) )
 ps.optimizePath (0)
 ps.clearRoadmap ()
@@ -125,6 +138,16 @@ robot.getConfigSize ()
 r.client.gui.removeFromGroup("li",r.sceneName)
 r.client.gui.getNodeList()
 split -l 10000 scene.obj
+
+-0.12329573631286622, 1.9255286157131195, 0.609043899527751
+-0.12329573631286622, 1.9255286157131195, 0.7021111226081849
+sphereNamePrefix="spheree5"
+sphereName = sphereNamePrefix
+r.client.gui.addSphere (sphereName,0.01,[0,0.5,0.5,1]) # grey
+r.client.gui.applyConfiguration (sphereName, [-0.12329573631286622, 1.9255286157131195, 0.71,1,0,0,0])
+r.client.gui.addToGroup (sphereName, r.sceneName)
+r.client.gui.refresh ()
+
 
 qt1 = [0.11844751003683414, 3.187439275561228, 0.5110408998245528, 0.05105927086189454, -0.03984712928298416, 0.9793629247909962, -0.1914508257798393, 0.11526864531036812, -0.3709305506445321, -0.9214790643345386]
 

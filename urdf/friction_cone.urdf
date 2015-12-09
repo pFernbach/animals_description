@@ -9,7 +9,7 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-        <!-- cone1 is slightly larger than cone, cone is defined for mu = 0.5 -->
+        <!-- cone1 is slightly larger than a cone defined for mu = 0.5 -->
         <mesh filename="package://animals_description/meshes/cone1.dae"/>
       </geometry>
     </visual>

@@ -9,13 +9,13 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://animals_description/meshes/scene_jump5.dae"/>
+        <mesh filename="package://animals_description/meshes/scene_jump8_2.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://animals_description/meshes/scene_jump5.dae"/>
+        <mesh filename="package://animals_description/meshes/scene_jump8_2.dae"/>
       </geometry>
     </collision>
   </link>

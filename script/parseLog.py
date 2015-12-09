@@ -191,8 +191,10 @@ def parseParabola (pid, parabNB):
 # --------------------------------------------------------------------#
 
 # Parse parabola information contained in a hpp log
-def parseIntersectionConePlane (pid, suffixConfig, suffixXPlus, suffixXMinus, suffixZPlus, suffixZMinus):
+# shift is the number of lines between 'theta: ' and 'q: '
+def parseIntersectionConePlane (pid, suffixTheta, suffixConfig, suffixXPlus, suffixXMinus, suffixZPlus, suffixZMinus, shift):
     prefix = 'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/parabola/steering-method-parabola.cc:'
+    prefixTheta = prefix+suffixTheta
     prefixConfig = prefix+suffixConfig
     prefixXPlus = prefix+suffixXPlus
     prefixXMinus = prefix+suffixXMinus
@@ -200,7 +202,9 @@ def parseIntersectionConePlane (pid, suffixConfig, suffixXPlus, suffixXMinus, su
     prefixZMinus = prefix+suffixZMinus
     
     lineNB = 0
+    theta = 0
     configs = []
+    theta_vector = []
     xPlus_vector = []
     xMinus_vector = []
     zPlus_vector = []
@@ -212,6 +216,11 @@ def parseIntersectionConePlane (pid, suffixConfig, suffixXPlus, suffixXMinus, su
                 suffixConfigSplit = line [len (prefixConfig):].strip (',\n').split (',')
                 config = map (float, suffixConfigSplit) # convert into float
                 configs.append (config)
+                
+                thetaLine = lines[lineNB-shift]
+                if (thetaLine[:len (prefixTheta)] == prefixTheta):
+                    theta = float(thetaLine[len (prefixTheta):].strip ('\n'))
+                    print theta
                 
                 xPlusLine = lines[lineNB+1]
                 xPlus = float(xPlusLine[len (prefixXPlus):].strip ('\n'))
@@ -229,13 +238,14 @@ def parseIntersectionConePlane (pid, suffixConfig, suffixXPlus, suffixXMinus, su
                 zMinus = float(zMinusLine [len (prefixZMinus):].strip ('\n'))
                 print zMinus
                 
+                theta_vector.append (theta)
                 xPlus_vector.append (xPlus)
                 xMinus_vector.append (xMinus)
                 zPlus_vector.append (zPlus)
                 zMinus_vector.append (zMinus)
                 
             lineNB = lineNB+1
-    return np.array (zip (*configs)), xPlus_vector, xMinus_vector, zPlus_vector, zMinus_vector
+    return np.array (configs), theta_vector, xPlus_vector, xMinus_vector, zPlus_vector, zMinus_vector
 
 # --------------------------------------------------------------------#
 
@@ -302,3 +312,7 @@ def parseAlphaAngles (pid, suffixAlphaMin, suffixAlphaMax, suffixAlphaMinus, suf
             
     
     return alphaMin_vector, alphaMax_vector, alphaMinus_vector, alphaPlus_vector, alphaInf_vector, alphaSup_vector, alphaInf4_vector
+
+# --------------------------------------------------------------------#
+
+

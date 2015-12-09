@@ -14,13 +14,15 @@ import math
 import numpy as np
 
 robot = Robot ('robot')
-#robot.setJointBounds('base_joint_xyz', [-6, 6.7, -4, 4, 0, 8]) # ultimate goal!
+#robot.setJointBounds('base_joint_xyz', [-6, 6.7, -2.5, 3.2, 0, 8]) # ultimate goal!
 #robot.setJointBounds('base_joint_xyz', [1.6, 6.7, -2.2, 1.5, 0, 3]) # first goal
 #robot.setJointBounds('base_joint_xyz', [-0.3, 6.7, -2.2, 2.4, 0, 3]) # second goal
 #robot.setJointBounds('base_joint_xyz', [-2.6, 6.7, -2.2, 2.4, 0, 3]) # third goal
-#robot.setJointBounds('base_joint_xyz', [-6, -2, -2, 3, 0, 8]) # bottom to ultimate
+#robot.setJointBounds('base_joint_xyz', [-6, 6.9, -2.8, 3.2, 0, 3]) # start to bottom
+robot.setJointBounds('base_joint_xyz', [-6, -2.2, -2.4, 3, 0, 8]) # bottom to ultimate
 #robot.setJointBounds('base_joint_xyz', [-5, -2.2, -0.1, 2.8, 0, 6]) # bottom to middle column
-robot.setJointBounds('base_joint_xyz', [-5, -2.2, -0.1, 2.8, 0, 3]) # bottom to bottom 1
+#robot.setJointBounds('base_joint_xyz', [-5, -2.2, -0.1, 2.8, 0, 3]) # bottom to bottom 1
+#robot.setJointBounds('base_joint_xyz', [-6, 6.7, -2.5, 3.2, 0, 3]) # first to bottom
 
 ps = ProblemSolver (robot)
 cl = robot.client
@@ -32,32 +34,39 @@ pp = PathPlayer (robot.client, r)
 r.loadObstacleModel ("animals_description","scene_jump_harder","scene_jump_harder")
 
 # Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
-#q11 = [5.7, 1, 0.5, 0, 0, 0, 1, 0, 0, 1, 0]
+#q11 = [5.7, 0.5, 0.5, 0, 0, 0, 1, 0, 0, 1, 0] # start
 q11 = [-3.5, 1.7, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # bottom of column
 r(q11)
 #q22 = [2.6, -1.4, 0.35, 0, 0, 0, 1, 0, 0, 1, 0] # first goal
 #q22 = [0.7, 1.55, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # second goal
 #q22 = [-1.7, -1.5, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # third goal
+#q22 = [-3.5, 1.7, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # bottom of column
 #q22 = [-3.3, 1.5, 3.4, 0, 0, 0, 1, 0, 0, 1, 0] # in column
-q22 = [-4.2, 0.9, 1.7, 0, 0, 0, 1, 0, 0, 1, 0] # bottom 1 of column
+#q22 = [-4.2, 0.9, 1.7, 0, 0, 0, 1, 0, 0, 1, 0] # bottom 1 of column
 #q22 = [-4.4, 0.9, 4.1, 0, 0, 0, 1, 0, 0, 1, 0] # bottom 3 of column
+q22 = [-4.4, -1.8, 6.5, 0, 0, 0, 1, 0, 0, 1, 0] # ultimate goal!
 r(q22)
-#q22 = [-4.4, -1.6, 6.5, 0, 0, 0, 1, 0, 0, 1, 0] # ultimate goal!
 
-#q = 
-q = [-4.4, 0.9, 4.1, 0, 0, 0, 1, 0, 0, 1, 0]
-r(q)
-r(cl.robot.projectOnObstacle (q, 0.02))
 
-q1 = cl.robot.projectOnObstacle (q11, 0.02); q2 = cl.robot.projectOnObstacle (q22, 0.02)
+
+q1 = cl.robot.projectOnObstacle (q11, 0.001); q2 = cl.robot.projectOnObstacle (q22, 0.001)
 
 ps.setInitialConfig (q1); ps.addGoalConfig (q2)
 ps.solve ()
 
 samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0,1,1])
 
+samples2 = plotSampleSubPath (cl, r, 2, 20, "curvy2", [0,0.4,0.7,1])
 
 #ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_envir3d_with_window.rdm')
+
+# start to bottom
+ps.resetGoalConfigs ()
+robot.setJointBounds('base_joint_xyz', [-6, 6.7, -2.5, 3.2, 0, 3]) # start to bottom
+q11 = [5.7, 0.5, 0.5, 0, 0, 0, 1, 0, 0, 1, 0]
+q22 = [-3.5, 1.7, 0.4, 0, 0, 0, 1, 0, 0, 1, 0]
+
+cl.problem.generateValidConfig(2)
 
 r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
 
@@ -66,25 +75,29 @@ r(ps.configAtParam(0,0.001))
 ps.pathLength(0)
 wp = ps.getWaypoints (0)
 
-# Get projected random configs and display them
-from parseLog import parseConfig
-num_log = 21301
+# Get projected random configs CONES and display them
+num_log = 7308
 qrands = parseConfig(num_log,'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/parabola/parabola-planner.cc:157: q_proj: ')
-sphereNamePrefix="qrand_sphere_"; i = 0
-for qrand in qrands:
-    sphereName = sphereNamePrefix+str(i)
-    r.client.gui.addSphere (sphereName,0.1,[0.8,0.1,0.1,1]) # red
-    r.client.gui.applyConfiguration (sphereName, [qrand[0],qrand[1],qrand[2],1,0,0,0])
-    r.client.gui.addToGroup (sphereName, r.sceneName)
-    i = i + 1
+sphereNamePrefix="qrand_sphere_"
+for i in range(0,len(qrands)):
+    qrand = qrands[i]
+    #sphereName = sphereNamePrefix+str(i)
+    #r.client.gui.addSphere (sphereName,0.1,[0.8,0.1,0.1,1]) # red
+    #r.client.gui.applyConfiguration (sphereName, [qrand[0],qrand[1],qrand[2],1,0,0,0])
+    #r.client.gui.addToGroup (sphereName, r.sceneName)
+    coneName = sphereNamePrefix+str(i)
+    qCone = cl.robot.setOrientation (qrand.tolist())
+    r.loadObstacleModel ("animals_description","friction_cone2",coneName)
+    r.client.gui.applyConfiguration (coneName, qCone[0:7])
+    r.client.gui.addToGroup (coneName, r.sceneName)
 
 r.client.gui.refresh ()
 
 
 # Plot a cone and rotate it!
-qCone = cl.robot.setOrientation (q2)
-coneName = "cone2"
-r.loadObstacleModel ("animals_description","friction_cone",coneName)
+qCone = cl.robot.setOrientation (q2) # wp[15]
+coneName = "cone5"
+r.loadObstacleModel ("animals_description","friction_cone2",coneName)
 r.client.gui.applyConfiguration (coneName, qCone[0:7])
 r.client.gui.refresh ()
 #r.client.gui.removeFromGroup (coneName, r.sceneName)
@@ -101,31 +114,45 @@ plotThetaPlane (q1, q2, r, "ThetaPlane")
 r.client.gui.removeFromGroup ("ThetaPlane", r.sceneName)
 r.client.gui.removeFromGroup ("ThetaPlanebis", r.sceneName)
 
-plotCone (q1, cl, r, 0.5, 0.4, "c1")
-plotCone (q2, cl, r, 0.5, 0.4, "c2")
+#plotCone (q1, cl, r, 0.5, 0.4, "c1"); plotCone (q2, cl, r, 0.5, 0.4, "c2")
 
 index = cl.robot.getConfigSize () - cl.robot.getExtraConfigSize ()
-q = qa[::]
+q = q2[::]
 plotStraightLine ([q [index],q [index+1],q [index+2]], q, r, "normale2")
 
-plotConeWaypoints (cl, 0, r, 0.5, 0.4, "wpcones")
+
+## Plot all cone waypoints:
+#plotConeWaypoints (cl, 0, r, 0.5, 0.4, "wpcones")
 wp = cl.problem.getWaypoints (0)
 for i in np.arange(0, len(wp), 1):
-    plotCone (wp[i], cl, r, 0.5, 0.4, "wpcones"+str(i))
+    qCone = cl.robot.setOrientation (wp[i])
+    coneName = "wp_cone_"+str(i)
+    r.loadObstacleModel ("animals_description","friction_cone2",coneName)
+    r.client.gui.applyConfiguration (coneName, qCone[0:7])
+    r.client.gui.refresh ()
 
 
-tanTheta = (q2 [1] - q1 [1]) / (q2 [0] - q1 [0])
-num_log = 22010
-configs, xPlus_vector, xMinus_vector, zPlus_vector, zMinus_vector = parseIntersectionConePlane (num_log, '531: q: ', '532: x_plus: ', '533: x_minus: ', '534: z_x_plus: ', '535: z_x_minus: ')
+## Plot ONE cone-planeTheta intersection:
+num_log = 3533
+configs, theta_vector, xPlus_vector, xMinus_vector, zPlus_vector, zMinus_vector = parseIntersectionConePlane (num_log,'220: theta: ', '544: q: ', '545: x_plus: ', '546: x_minus: ', '547: z_x_plus: ', '548: z_x_minus: ', 11)
 i = 0
-plotStraightLine ([xPlus_vector[i], xPlus_vector[i]*tanTheta, zPlus_vector[i]], q1, r, "inter1")
-plotStraightLine ([xMinus_vector[i], xMinus_vector[i]*tanTheta, zMinus_vector[i]], q1, r, "inter2")
+plotStraightLine ([xPlus_vector[i], xPlus_vector[i]*math.tan(theta_vector[i]), zPlus_vector[i]], q11, r, "inter1")
+plotStraightLine ([xMinus_vector[i], xMinus_vector[i]*math.tan(theta_vector[i]), zMinus_vector[i]], q11, r, "inter2")
 
 i = 1
-plotStraightLine ([xPlus_vector[i], xPlus_vector[i]*tanTheta, zPlus_vector[i]], q2, r, "inter33")
-plotStraightLine ([xMinus_vector[i], xMinus_vector[i]*tanTheta, zMinus_vector[i]], q2, r, "inter44")
+plotStraightLine ([xPlus_vector[i], xPlus_vector[i]*math.tan(theta_vector[i]), zPlus_vector[i]], q22, r, "inter33")
+plotStraightLine ([xMinus_vector[i], xMinus_vector[i]*math.tan(theta_vector[i]), zMinus_vector[i]], q22, r, "inter44")
+#r.client.gui.removeFromGroup ("inter2"+"straight", r.sceneName)
 
-r.client.gui.removeFromGroup ("inter2"+"straight", r.sceneName)
+
+## Plot all cone-planeTheta intersections:
+num_log = 7308
+configs, theta_vector, xPlus_vector, xMinus_vector, zPlus_vector, zMinus_vector = parseIntersectionConePlane (num_log,'222: theta: ', '549: q: ', '550: x_plus: ', '551: x_minus: ', '552: z_x_plus: ', '553: z_x_minus: ', 11)
+len(xPlus_vector)
+for i in range(0,len(xPlus_vector)/4):
+    plotStraightLine ([xPlus_vector[i], xPlus_vector[i]*math.tan(theta_vector[i]), zPlus_vector[i]], configs[i], r, "inter"+str(i))
+
+
 
 
 ## 2D Plot tools ##
@@ -156,7 +183,7 @@ plt.show()
 lightName = "li"
 r.client.gui.addLight (lightName, r.windowId, 0.001, [0.5,0.5,0.5,1])
 r.client.gui.addToGroup (lightName, r.sceneName)
-r.client.gui.applyConfiguration (lightName, [-2,2,5,1,0,0,0])
+r.client.gui.applyConfiguration (lightName, [-5,0,2,1,0,0,0])
 #r.client.gui.applyConfiguration (lightName, [2,-2,5,1,0,0,0])
 r.client.gui.refresh ()
 #r.client.gui.removeFromGroup (lightName, r.sceneName)
@@ -196,18 +223,18 @@ robot.getConfigSize ()
 r.client.gui.getNodeList()
 
 
-['0_scene_hpp_', 'inclined_plane_3d', 'inclined_plane_3d/l_one', 'inclined_plane_3d/l_one_0', 'inclined_plane_3d/obstacle_base', 'inclined_plane_3d/obstacle_base_0', 'robot', 'robot/base_link', 'robot/base_link_0']
-
 # get all theta:
 for i in range(0,len(wp)):
     print wp[i][10]
 
 # Plot a sphere (dot)
-sphereNamePrefix="sdg"
+sphereNamePrefix="sdg2"
 sphereName = sphereNamePrefix
 r.client.gui.addSphere (sphereName,0.01,[0,0.5,0.5,1]) # grey
-r.client.gui.applyConfiguration (sphereName, [0.793416,0.98263,7.61459,1,0,0,0])
+r.client.gui.applyConfiguration (sphereName, [-4.1308336459234205, 0.6935200067554956, 3.943446921479487,1,0,0,0])
 r.client.gui.addToGroup (sphereName, r.sceneName)
 r.client.gui.refresh ()
 
+#q11 = [-3.49712,1.7903,0.269499,0.95451,0.297974, -0.0105248,0.00328557,-0.018134,-0.568908,0.822201,0]
+#q22 = [-2.94613,-0.761086,4.40897,-0.3043,0.165307, 0.821124,-0.453685,-0.295478,-0.399652,-0.867739,1.17288]
 
