@@ -7,13 +7,13 @@ from hpp.corbaserver.ant import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
 import numpy as np
-from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plotPath, plotVerticalConeWaypoints, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath
+from viewer_display_library import normalizeDir, plotCone, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath
 from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
 
 robot = Robot ('robot')
 #robot.setJointBounds('base_joint_xyz', [-6, 6, -14, 20, -8, 10]) # cave
-#robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -14, -1, -2.6, 2.6]) # cave (easier)
-robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -14, 4.5, -2.6, 2.6]) # cave middle
+#robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -14, -1, -2.6, 2.6]) # cave middle
+robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -14, 4.5, -2.6, 2.6]) # cave end
 ps = ProblemSolver (robot)
 cl = robot.client
 
@@ -25,10 +25,8 @@ r.loadObstacleModel ("animals_description","cave","cave")
 
 # Configs : [x, y, z, qw, qx, qy, qz, nx, ny, nz, theta]
 q11 = [0, -13, -2, 1, 0, 0, 0, 0, 0, 1, 0] # cave entry
-#q22 = [-0.4, -3, -0.7, 1, 0, 0, 0, 0, 0, 1, 0] # cave middle (easier...)
-q22 = [-0.18, 3.5, -0.11, 1, 0, 0, 0, 0, 0, 1, 0] # cave middle
-#q22 = [-1.8, 17, 17, 1, 0, 0, 0, 0, 0, 1, 0] # cave top
-#q22 = [-1.5, 2, 0.31, 1, 0, 0, 0, 0, 0, 1, 0] # on floor
+#q22 = [-0.4, -3, -0.7, 1, 0, 0, 0, 0, 0, 1, 0] # cave middle
+q22 = [-0.18, 3.5, -0.11, 1, 0, 0, 0, 0, 0, 1, 0] # cave end
 r(q22)
 
 q1 = cl.robot.projectOnObstacle (q11, 0.01)
@@ -45,64 +43,31 @@ samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
 
 samples = plotSampleSubPath (cl, r, 2, 20, "curvy2", [0,0.6,0.3,1])
 
-#ps.resetGoalConfigs ()
+
 #ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_ant_in_cave1.rdm')
-
-
-qr1=[1.55746,-9.173,0.720294,-0.236625,0.381534,0.845472,0.289165,0.252814,0.358548,0.898626,0.339103]
-
-qr2=[-0.469073,-5.91563,-0.774315,-0.206245,0.66638,-0.360097,0.61946,0.950034,0.245797,0.192402,0.672105]
-
-qr3 = [-1.6241,-10.8368,-1.47441,0.368603,0.244858,0.522788,-0.728608,-0.907678,-0.00581859,-0.419626,-1.77024]
-
-wp = ps.getWaypoints (1)
-
-r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
+Z
 
 r(ps.configAtParam(0,0.001))
 ps.pathLength(0)
-ps.getWaypoints (0) 
-r.client.gui.setVisibility('robot/l_bounding_sphere',"ON")
+wp = ps.getWaypoints (0) 
+r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
 
 ## 3D Plot tools ##
 q0 = [0, 0, 5, 0, 0, 0, 1, 0, 0, 1, 0];
 r(q0)
 
-plotFrame (r, "_", [0,0,4], 0.5)
+plotFrame (r, "frame", [0,0,4], 0.5)
 
-plotPath (cl, 0, r, "pathy", 0.1)
+plotThetaPlane (q1, q2, r, "ThetaPlane")
 
-plotThetaPlane (q1, q2, r, "ThetaPlane2")
-
-plotCone (q1, cl, r, 0.5, 0.4, "c1")
-plotCone (q2, cl, r, 0.5, 0.4, "c2")
-
+plotCone (q, cl, r, "yep", "friction_cone2")
+plotConeWaypoints (cl, 0, r, "wp", "friction_cone2")
 
 index = cl.robot.getConfigSize () - cl.robot.getExtraConfigSize ()
 q = q2[::]
 plotStraightLine ([q[index], q[index+1], q[index+2]], q, r, "normale")
-plotCone (q1, cl, r, 0.5, 0.2, "cone1")
-
-r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
-
-## Plot all cone waypoints:
-#plotConeWaypoints (cl, 0, r, 0.5, 0.4, "wpcones")
-wp = cl.problem.getWaypoints (0)
-for i in np.arange(0, len(wp), 1):
-    qCone = cl.robot.setOrientation (wp[i])
-    coneName = "wp_cone_"+str(i)
-    r.loadObstacleModel ("animals_description","friction_cone",coneName)
-    r.client.gui.applyConfiguration (coneName, qCone[0:7])
-    r.client.gui.refresh ()
 
 
-
-# Add light to scene
-lightName = "li"
-r.client.gui.addLight (lightName, r.windowId, 0.001, [0.4,0.4,0.4,0.5])
-r.client.gui.addToGroup (lightName, r.sceneName)
-r.client.gui.applyConfiguration (lightName, [1,0,0,1,0,0,0])
-r.client.gui.refresh ()
 
 # --------------------------------------------------------------------#
 

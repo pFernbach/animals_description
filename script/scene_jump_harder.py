@@ -7,7 +7,7 @@ from hpp.corbaserver.sphere import Robot
 #from hpp.corbaserver.ant_sphere import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
-from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plotPath, plotVerticalConeWaypoints, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath
+from viewer_display_library import normalizeDir, plotCone, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath
 from parseLog import parseConfig, parseNodes, parseIntersectionConePlane, parseAlphaAngles
 from parabola_plot_tools import parabPlotDoubleProjCones, parabPlotOriginCones
 import math

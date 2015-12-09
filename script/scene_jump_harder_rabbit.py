@@ -6,7 +6,7 @@
 from hpp.corbaserver.rabbit import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
-from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plotPath, plotVerticalConeWaypoints, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath
+from viewer_display_library import normalizeDir, plotCone, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath, contactPosition
 from parseLog import parseConfig, parseNodes, parseIntersectionConePlane, parseAlphaAngles
 from parabola_plot_tools import parabPlotDoubleProjCones, parabPlotOriginCones
 import math
@@ -59,22 +59,16 @@ samples2 = plotSampleSubPath (cl, r, 2, 20, "curvy2", [0,0.4,0.7,1])
 
 #ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_envir3d_with_window.rdm')
 
-# start to bottom
-ps.resetGoalConfigs ()
 
-q11 = [6.4, 0.5, 0.5, 0, 0, 0, 1, 0, 0, 1, Pi]
-q22 = [-3.5, 1.7, 0.4, 0, 0, 0, 1, 0, 0, 1, Pi]
-cl.problem.generateValidConfig(2)
-
-r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
+# DRAFT return contact position:
+qConeContact = contactPosition (q, cl, r)
+plotCone (qConeContact, cl, r, "verif", "friction_cone2")
 
 q0 = [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, Pi]
-
-r([4, 2.9, 0.5, 0, 0, 0, 1, 0, 0, 1, Pi])
-
 r(ps.configAtParam(0,0.001))
 ps.pathLength(0)
 wp = ps.getWaypoints (0)
+cl.problem.generateValidConfig(2)
 
 # Get projected random configs CONES and display them
 num_log = 7308
@@ -82,26 +76,11 @@ qrands = parseConfig(num_log,'INFO:/local/mcampana/devel/hpp/src/hpp-core/src/pa
 sphereNamePrefix="qrand_sphere_"
 for i in range(0,len(qrands)):
     qrand = qrands[i]
-    #sphereName = sphereNamePrefix+str(i)
-    #r.client.gui.addSphere (sphereName,0.1,[0.8,0.1,0.1,1]) # red
-    #r.client.gui.applyConfiguration (sphereName, [qrand[0],qrand[1],qrand[2],1,0,0,0])
-    #r.client.gui.addToGroup (sphereName, r.sceneName)
     coneName = sphereNamePrefix+str(i)
-    qCone = cl.robot.setOrientation (qrand.tolist())
-    r.loadObstacleModel ("animals_description","friction_cone",coneName)
-    r.client.gui.applyConfiguration (coneName, qCone[0:7])
-    r.client.gui.addToGroup (coneName, r.sceneName)
+    plotCone (qrand, cl, r, coneNameSufffix, "friction_cone1")
 
 r.client.gui.refresh ()
 
-
-# Plot a cone and rotate it!
-qCone = cl.robot.setOrientation (q2) # wp[15]
-coneName = "cone5"
-r.loadObstacleModel ("animals_description","friction_cone",coneName)
-r.client.gui.applyConfiguration (coneName, qCone[0:7])
-r.client.gui.refresh ()
-#r.client.gui.removeFromGroup (coneName, r.sceneName)
 
 ## 3D Plot tools ##
 q0 = [0, 0, 5, 0, 0, 0, 1, 0, 0, 1, 0];
@@ -109,7 +88,8 @@ r(q0)
 
 plotFrame (r, "frame", [0,0,0], 0.5)
 
-plotPath (cl, 0, r, "pathy", 0.1)
+plotCone (q, cl, r, "yep", "friction_cone2")
+plotConeWaypoints (cl, 0, r, "wp", "friction_cone2")
 
 plotThetaPlane (q1, q2, r, "ThetaPlane")
 r.client.gui.removeFromGroup ("ThetaPlane", r.sceneName)
@@ -235,11 +215,6 @@ robot.getConfigSize ()
 r.client.gui.getNodeList()
 
 
-['0_scene_hpp_', 'inclined_plane_3d', 'inclined_plane_3d/l_one', 'inclined_plane_3d/l_one_0', 'inclined_plane_3d/obstacle_base', 'inclined_plane_3d/obstacle_base_0', 'robot', 'robot/base_link', 'robot/base_link_0']
-
-# get all theta:
-for i in range(0,len(wp)):
-    print wp[i][10]
 
 # Plot a sphere (dot)
 [-4.363806586625437, -1.6379223704051435, 6.388551003534305]
@@ -252,6 +227,4 @@ r.client.gui.applyConfiguration (sphereName, [-4.1308336459234205, 0.69352000675
 r.client.gui.addToGroup (sphereName, r.sceneName)
 r.client.gui.refresh ()
 
-#q11 = [-3.49712,1.7903,0.269499,0.95451,0.297974, -0.0105248,0.00328557,-0.018134,-0.568908,0.822201,0]
-#q22 = [-2.94613,-0.761086,4.40897,-0.3043,0.165307, 0.821124,-0.453685,-0.295478,-0.399652,-0.867739,1.17288]
 

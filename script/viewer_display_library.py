@@ -26,7 +26,8 @@ def normalizeDir (q, robot):
 
 # --------------------------------------------------------------------#
 
-## Plot whole path in viewer (in blue) ##
+## Plot whole path in viewer (in blue) WARNING: NOT ADAPTED FOR PARABOLA ##
+# For parabola, prefrer method plotSampleSubPath
 ## Parameters:
 # cl: corbaserver client
 # nPath: path number
@@ -58,55 +59,18 @@ def plotFrame (r, lineNameSuffix, framePosition, ampl):
 
 # --------------------------------------------------------------------#
 
-## Plot VERTICAL cone at each waypoint of the path ##
-## Parameters:
-# cl: corbaserver client
-# nPath: path number
-# r: viewer server
-# mu: cone coefficient of friction
-# ampl: cone amplitude
-# lineNamePrefix: string prefix used for line name
-def plotVerticalConeWaypoints (cl, nPath, r, mu, ampl, lineNamePrefix):
-    wp = cl.problem.getWaypoints (nPath)
-    for i in np.arange(0, len(wp), 1):
-        plotVerticalCone (wp[i], r, mu, ampl, lineNamePrefix)
-
-# --------------------------------------------------------------------#
-
 ## Plot cone at each waypoint of the path ##
 ## Parameters:
 # cl: corbaserver client
 # nPath: path number
 # r: viewer server
-# mu: cone coefficient of friction
-# ampl: cone amplitude
-# lineNamePrefix: string prefix used for line name
-def plotConeWaypoints (cl, nPath, r, mu, ampl, lineNamePrefix):
+# coneNameSufffix: string suffix used for cone name
+# coneURDFname: "friction_cone" (mu = 0.5) or "friction_cone2" (mu = 1.2)
+def plotConeWaypoints (cl, nPath, r, coneNameSufffix, coneURDFname):
     wp = cl.problem.getWaypoints (nPath)
     for i in np.arange(0, len(wp), 1):
-        plotCone (wp[i], cl, r, mu, ampl, lineNamePrefix+str(i))
+        plotCone (wp[i], cl, r, str(i)+'_'+coneNameSufffix, coneURDFname)
 
-# --------------------------------------------------------------------#
-
-## Plot VERTICAL cone ##
-## Parameters:
-# q: configuration of cone (position, orientation)
-# r: viewer server
-# mu = cone coefficient of friction
-# ampl: cone amplitude
-# lineNamePrefix: string prefix used for line name
-def plotVerticalCone (q, r, mu, ampl, lineNamePrefix):
-    phi = math.atan(mu)
-    x = q[0]
-    y = q[1]
-    z = q[2]
-    for angle in np.arange(0, 2*math.pi, 0.2):
-        x_theta = ampl*math.cos(angle)
-        y_theta = ampl*math.sin(angle)
-        z_theta = ampl/math.sin(phi)
-        lineName = lineNamePrefix+str(angle)
-        r.client.gui.addLine(lineName,[x,y,z], [x+x_theta,y+y_theta,z+z_theta],[0,1,0.3,1])
-        r.client.gui.addToGroup (lineName, r.sceneName)
 
 # --------------------------------------------------------------------#
 
@@ -115,49 +79,14 @@ def plotVerticalCone (q, r, mu, ampl, lineNamePrefix):
 # cl: corbaserver client
 # q: configuration of cone (position, orientation)
 # r: viewer server
-# mu: cone coefficient of friction
-# ampl: cone amplitude
-# lineNamePrefix: string prefix used for line name
-def plotCone (q, cl, r, mu, ampl, lineNamePrefix):
-    index = cl.robot.getConfigSize () - 4
-    phi = math.atan(mu)
-    x0 = q[0]
-    y0 = q[1]
-    z0 = q[2]
-    U = q[index]
-    V = q[index+1]
-    W = q[index+2]
-
-    for angle in np.arange(0, 2*math.pi, 0.05):
-        x = ampl*math.cos(angle)
-        y = ampl*math.sin(angle)
-        discrCone = (U**2 + V**2 + W**2)*(U**2*mu**2*x**2 - U**2*y**2 + 2*U*V*mu**2*x*y + 2*U*V*x*y + V**2*mu**2*y**2 - V**2*x**2 + W**2*mu**2*x**2 + W**2*mu**2*y**2)
-        if discrCone >= 0:
-            z1 = coneFunctionOne (x, y, U, V, W, mu, discrCone)
-            z2 = coneFunctionTwo (x, y, U, V, W, mu, discrCone)
-            lineName = lineNamePrefix+str(angle)
-            r.client.gui.addLine(lineName,[x0,y0,z0], [x0+x,y0+y,z0+z1],[0,1,0.3,1])
-            r.client.gui.addToGroup (lineName, r.sceneName)
-            r.client.gui.addLine("Second"+lineName,[x0,y0,z0], [x0+x,y0+y,z0+z2],[0,0.6,0.6,1])
-            r.client.gui.addToGroup ("Second"+lineName, r.sceneName)
-
-
-# --------------------------------------------------------------------#
-
-## Cone function 1 ##
-# [U, V, W] = cone direction
-# discrCone = discriminant of cone equation
-def coneFunctionOne (x, y, U, V, W, mu, discrCone):
-    z = (math.sqrt(discrCone) + U*W*x + V*W*y + U*W*mu**2*x + V*W*mu**2*y)/(U**2 + V**2 - W**2*mu**2)
-    return z
-
-
-## Cone function 2 ##
-# [U, V, W] = cone direction
-# discrCone = discriminant of cone equation
-def coneFunctionTwo (x, y, U, V, W, mu, discrCone):
-    z = (-math.sqrt(discrCone) + U*W*x + V*W*y + U*W*mu**2*x + V*W*mu**2*y)/(U**2 + V**2 - W**2*mu**2)
-    return z
+# coneNameSufffix: string suffix used for cone name
+# coneURDFname: "friction_cone" (mu = 0.5) or "friction_cone2" (mu = 1.2)
+def plotCone (q, cl, r, coneNameSufffix, coneURDFname):
+    qCone = cl.robot.setOrientation (q)
+    coneName = "cone_"+coneNameSufffix
+    r.loadObstacleModel ("animals_description",coneURDFname,coneName)
+    r.client.gui.applyConfiguration (coneName, qCone[0:7])
+    r.client.gui.refresh ()
 
 # --------------------------------------------------------------------#
 
@@ -236,5 +165,26 @@ def plotSampleSubPath (cl, r, nPath, NbPointsPerSubPath, curvePrefix, curveColor
     r.client.gui.addCurve (curvePrefix, pointsCurv, curveColor)
     r.client.gui.addToGroup (curvePrefix, r.sceneName)
     return plotSampleConfigs
+
+# --------------------------------------------------------------------#
+
+## Return contact position (projected on nearest obstacle) ##
+# WARNING: assuming that q has been projected and contains "good" orientation and normal
+# (if one wants to plot the cone at the contact...)
+## Parameters:
+# q: CoM configuration (not at the contact)
+# cl: corbaserver client
+# r: viewer server
+def contactPosition (q, cl, r):
+    qConeContact = q[::] # at least for orientation
+    index = cl.robot.getConfigSize () - cl.robot.getExtraConfigSize ()
+    n = np.array([q[index], q[index+1], q[index+2]]) # normal
+    cl.robot.setCurrentConfig (q)
+    res = cl.robot.distancesToCollision ()
+    pCoM = q[0:3]
+    pj = res[4][np.argmin(res[0])] # point on obstacle surface
+    distContactCoM = np.dot(np.array(pCoM)-np.array(pj),n)
+    qConeContact[0:3] = (np.array(q[0:3]) - distContactCoM*n).tolist ()
+    return qConeContact
 
 
