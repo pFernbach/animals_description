@@ -8,14 +8,16 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://animals_description/meshes/cave_mono2_2.dae"/>
+        <!--<mesh filename="package://animals_description/meshes/cave_mono2_2.dae"/>-->
+        <!--<mesh filename="package://animals_description/meshes/cave_mono3_3.dae"/>-->
+		<mesh filename="package://animals_description/meshes/cave_mono3_3.stl"/>
       </geometry>
       <material name="Green"/>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://animals_description/meshes/cave_mono2_2.dae"/>
+        <mesh filename="package://animals_description/meshes/cave_mono3_3.stl"/>
       </geometry>
     </collision>
   </link>

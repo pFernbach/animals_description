@@ -2,8 +2,9 @@
 # Script which goes with animals_description or room_description package.
 # Easy way to test planning algo (no internal DoF) on SO3 joint.
 
-from hpp.corbaserver.ant import Robot
+#from hpp.corbaserver.ant import Robot
 #from hpp.corbaserver.ant_sphere import Robot
+from hpp.corbaserver.sphere import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
 import numpy as np
@@ -12,8 +13,8 @@ from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
 
 robot = Robot ('robot')
 #robot.setJointBounds('base_joint_xyz', [-6, 6, -14, 20, -8, 10]) # cave
-#robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -14, -1, -2.6, 2.6]) # cave middle
-robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -14, 4.5, -2.6, 2.6]) # cave end
+robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -14, -1, -2.5, 1.6]) # cave middle
+#robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -14, 4.5, -2.5, 1.6]) # cave end
 ps = ProblemSolver (robot)
 cl = robot.client
 
@@ -25,14 +26,14 @@ r.loadObstacleModel ("animals_description","cave","cave")
 
 # Configs : [x, y, z, qw, qx, qy, qz, nx, ny, nz, theta]
 q11 = [0, -13, -2, 1, 0, 0, 0, 0, 0, 1, 0] # cave entry
-#q22 = [-0.4, -3, -0.7, 1, 0, 0, 0, 0, 0, 1, 0] # cave middle
-q22 = [-0.18, 3.5, -0.11, 1, 0, 0, 0, 0, 0, 1, 0] # cave end
+q22 = [-0.4, -3, -0.7, 1, 0, 0, 0, 0, 0, 1, 0] # cave middle
+#q22 = [-0.18, 3.5, -0.11, 1, 0, 0, 0, 0, 0, 1, 0] # cave end
 r(q22)
 
-q1 = cl.robot.projectOnObstacle (q11, 0.01)
+q1 = cl.robot.projectOnObstacle (q11, 0.005)
 robot.isConfigValid(q1)
 r(q1)
-q2 = cl.robot.projectOnObstacle (q22, 0.01)
+q2 = cl.robot.projectOnObstacle (q22, 0.005)
 robot.isConfigValid(q2)
 r(q2)
 
@@ -41,11 +42,11 @@ ps.solve ()
 
 samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
 
-samples = plotSampleSubPath (cl, r, 2, 20, "curvy2", [0,0.6,0.3,1])
+samples = plotSampleSubPath (cl, r, 1, 20, "curvy2", [0,0.85,0.25,1])
 
 
 #ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_ant_in_cave1.rdm')
-Z
+
 
 r(ps.configAtParam(0,0.001))
 ps.pathLength(0)
@@ -61,7 +62,8 @@ plotFrame (r, "frame", [0,0,4], 0.5)
 plotThetaPlane (q1, q2, r, "ThetaPlane")
 
 plotCone (q, cl, r, "yep", "friction_cone2")
-plotConeWaypoints (cl, 0, r, "wp", "friction_cone2")
+plotConeWaypoints (cl, 0, r, "wp", "friction_cone")
+plotConeWaypoints (cl, 1, r, "wp2", "friction_cone")
 
 index = cl.robot.getConfigSize () - cl.robot.getExtraConfigSize ()
 q = q2[::]
@@ -72,10 +74,12 @@ plotStraightLine ([q[index], q[index+1], q[index+2]], q, r, "normale")
 # --------------------------------------------------------------------#
 
 ## Add light to scene ##
-lightName = "li"
+lightName = "li5"
 r.client.gui.addLight (lightName, r.windowId, 0.001, [0.4,0.4,0.4,1])
 r.client.gui.addToGroup (lightName, r.sceneName)
-r.client.gui.applyConfiguration (lightName, [1,0,0,1,0,0,0])
+#r.client.gui.applyConfiguration (lightName, [1,0,0,1,0,0,0])
+r.client.gui.applyConfiguration (lightName, [0.2,-13.5,-2.3,1,0,0,0])
+r.client.gui.applyConfiguration (lightName, [0,-5,-2.5,1,0,0,0])
 r.client.gui.refresh ()
 #r.client.gui.removeFromGroup (lightName, r.sceneName)
 

@@ -22,7 +22,7 @@ INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/python.cmake)
 
 SET(PROJECT_NAME animals_description)
-SET(PROJECT_DESCRIPTION "Data specific to animal robot for hpp-corbaserver")
+SET(PROJECT_DESCRIPTION "Data specific to animal robot and parabola path planning for hpp-corbaserver")
 SET(PROJECT_URL "")
 
 SETUP_PROJECT()
@@ -33,39 +33,17 @@ ADD_REQUIRED_DEPENDENCY ("hpp-corbaserver >= 3")
 SET(CATKIN_PACKAGE_SHARE_DESTINATION
   ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
 
- # environments URDF
-install(FILES
-  urdf/multiple_planes_3d.urdf
-  urdf/plane_3d.urdf
-  urdf/inclined_plane_3d.urdf
-  urdf/environment_3d.urdf
-  urdf/environment_3d_with_window.urdf
-  urdf/waterLily_envir.urdf
-  urdf/cave.urdf
-  urdf/scene_jump.urdf
+ # install all files contained in urdf
+install(DIRECTORY urdf/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
 
 # install all files contained in meshes
 install(DIRECTORY meshes/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes)
 
- # robots URDF
-install(FILES
-  urdf/ant.urdf
-  urdf/sphere.urdf
-  urdf/ant_sphere.urdf
-  urdf/box.urdf
-  urdf/rabbit.urdf
-  urdf/friction_cone.urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf)
-
+# install all files contained in srdf
  # robots SRDF
-install(FILES
-  srdf/ant.srdf
-  srdf/sphere.srdf
-  srdf/ant_sphere.srdf
-  srdf/box.srdf
-  srdf/rabbit.srdf
+install(DIRECTORY srdf/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/srdf)
 
 

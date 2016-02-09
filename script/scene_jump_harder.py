@@ -14,12 +14,12 @@ import math
 import numpy as np
 
 robot = Robot ('robot')
-#robot.setJointBounds('base_joint_xyz', [-6, 6.7, -2.5, 3.2, 0, 8]) # ultimate goal!
+robot.setJointBounds('base_joint_xyz', [-6, 6.7, -2.5, 3.2, 0, 8]) # ultimate goal!
 #robot.setJointBounds('base_joint_xyz', [1.6, 6.7, -2.2, 1.5, 0, 3]) # first goal
 #robot.setJointBounds('base_joint_xyz', [-0.3, 6.7, -2.2, 2.4, 0, 3]) # second goal
 #robot.setJointBounds('base_joint_xyz', [-2.6, 6.7, -2.2, 2.4, 0, 3]) # third goal
 #robot.setJointBounds('base_joint_xyz', [-6, 6.9, -2.8, 3.2, 0, 3]) # start to bottom
-robot.setJointBounds('base_joint_xyz', [-6, -2.2, -2.4, 3, 0, 8]) # bottom to ultimate
+#robot.setJointBounds('base_joint_xyz', [-6, -2.2, -2.4, 3, 0, 8]) # bottom to ultimate
 #robot.setJointBounds('base_joint_xyz', [-5, -2.2, -0.1, 2.8, 0, 6]) # bottom to middle column
 #robot.setJointBounds('base_joint_xyz', [-5, -2.2, -0.1, 2.8, 0, 3]) # bottom to bottom 1
 #robot.setJointBounds('base_joint_xyz', [-6, 6.7, -2.5, 3.2, 0, 3]) # first to bottom
@@ -34,8 +34,8 @@ pp = PathPlayer (robot.client, r)
 r.loadObstacleModel ("animals_description","scene_jump_harder","scene_jump_harder")
 
 # Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
-#q11 = [5.7, 0.5, 0.5, 0, 0, 0, 1, 0, 0, 1, 0] # start
-q11 = [-3.5, 1.7, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # bottom of column
+q11 = [5.7, 0.5, 0.5, 0, 0, 0, 1, 0, 0, 1, 0] # start
+#q11 = [-3.5, 1.7, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # bottom of column
 r(q11)
 #q22 = [2.6, -1.4, 0.35, 0, 0, 0, 1, 0, 0, 1, 0] # first goal
 #q22 = [0.7, 1.55, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # second goal
@@ -108,7 +108,8 @@ r(q0)
 
 plotFrame (r, "frame", [0,0,0], 0.5)
 
-plotPath (cl, 0, r, "pathy", 0.1)
+plotCone (q, cl, r, "yep", "friction_cone2")
+plotConeWaypoints (cl, 0, r, "wp", "friction_cone2")
 
 plotThetaPlane (q1, q2, r, "ThetaPlane")
 r.client.gui.removeFromGroup ("ThetaPlane", r.sceneName)

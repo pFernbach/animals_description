@@ -61,7 +61,7 @@ samples2 = plotSampleSubPath (cl, r, 2, 20, "curvy2", [0,0.4,0.7,1])
 
 
 # DRAFT return contact position:
-qConeContact = contactPosition (q, cl, r)
+qConeContact = contactPosition (q22, cl, r)
 plotCone (qConeContact, cl, r, "verif", "friction_cone2")
 
 q0 = [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, Pi]
@@ -77,7 +77,7 @@ sphereNamePrefix="qrand_sphere_"
 for i in range(0,len(qrands)):
     qrand = qrands[i]
     coneName = sphereNamePrefix+str(i)
-    plotCone (qrand, cl, r, coneNameSufffix, "friction_cone1")
+    plotCone (qrand, cl, r, coneNameSufffix, "friction_cone2")
 
 r.client.gui.refresh ()
 

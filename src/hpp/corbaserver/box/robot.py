@@ -19,7 +19,7 @@
 from hpp.corbaserver.robot import Robot as Parent
 
 ##
-#  Control of puzzle robot in hpp
+#  Control of box robot in hpp
 #
 #  This class implements a client to the corba server implemented in
 #  hpp-corbaserver. It derive from class hpp.corbaserver.robot.Robot.

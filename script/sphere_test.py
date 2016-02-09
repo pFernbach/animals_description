@@ -2,20 +2,21 @@
 # Script which goes with animals_description package.
 # Easy way to test parabola-planning algo (no internal DoF) on SO3 joint.
 
-#from hpp.corbaserver.sphere import Robot
+from hpp.corbaserver.sphere import Robot
 #from hpp.corbaserver.ant import Robot
-from hpp.corbaserver.ant_sphere import Robot
+#from hpp.corbaserver.ant_sphere import Robot
+#from hpp.corbaserver.monopod_mesh import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
-from viewer_display_library import normalizeDir, plotVerticalCone, plotCone, plotPath, plotVerticalConeWaypoints, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath
+from viewer_display_library import normalizeDir, plotCone, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath, contactPosition
 from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
 from parabola_plot_tools import parabPlotDoubleProjCones, parabPlotOriginCones
 import math
 import numpy as np
 
 robot = Robot ('robot')
-robot.setJointBounds('base_joint_xyz', [-3.9, 3.9, -3.9, 3.9, 1, 12]) # plane
-#robot.setJointBounds('base_joint_xyz', [-6, 6, -6, 6, 2, 9]) # environment_3d
+#robot.setJointBounds('base_joint_xyz', [-3.9, 3.9, -3.9, 3.9, 1, 12]) # plane
+robot.setJointBounds('base_joint_xyz', [-6, 6, -6, 6, 2, 9]) # environment_3d
 ps = ProblemSolver (robot)
 cl = robot.client
 #cl.obstacle.loadObstacleModel('animals_description','inclined_plane_3d','inclined_plane_3d')
@@ -23,9 +24,10 @@ cl = robot.client
 # Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
 #q1 = [-1.5, -1.5, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]; q2 = [2.6, 3.7, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]
 #q11 = [2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0] # plane with theta = Pi
-q11 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [2.5, 2.7, 8, 0, 0, 0, 1, 0, 0, 1, 0] # plane with theta ~= 0
+#q11 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [2.5, 2.7, 8, 0, 0, 0, 1, 0, 0, 1, 0] # plane with theta ~= 0
+#q11 = [-2.5, 3, 4, 0, 0, 0, 1,-0.1, 0, 0, 1, 0]; q22 = [2.5, 2.7, 8, 0, 0, 0, 1, -0.1, 0, 0, 1, 0] # plane with theta ~= 0 MONOPOD
 #q11 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [2.5, 2.7, 9, 0, 0, 0, 1, 0, 0, 1, 0] # multiple-planes (3 planes)
-#q11 = [-5, 3.1, 4.2, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [5.2, -5.2, 4, 0, 0, 0, 1, 0, 0, 1, 0] # environment_3d
+q11 = [-5, 3.1, 4.2, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [5.2, -5.2, 4, 0, 0, 0, 1, 0, 0, 1, 0] # environment_3d
 #r(q22)
 
 from hpp.gepetto import Viewer, PathPlayer
@@ -33,15 +35,21 @@ r = Viewer (ps)
 pp = PathPlayer (robot.client, r)
 #r.loadObstacleModel ("animals_description","plane_3d","plane_3d")
 #r.loadObstacleModel ("animals_description","multiple_planes_3d","multiple_planes_3d")
-r.loadObstacleModel ("animals_description","inclined_plane_3d","inclined_plane_3d")
-#r.loadObstacleModel ("animals_description","environment_3d","environment_3d")
+#r.loadObstacleModel ("animals_description","inclined_plane_3d","inclined_plane_3d")
+r.loadObstacleModel ("animals_description","environment_3d","environment_3d")
 #r.loadObstacleModel ("animals_description","environment_3d_with_window","environment_3d_with_window")
 r(q11)
 
-q1 = cl.robot.projectOnObstacle (q11, 0.02); q2 = cl.robot.projectOnObstacle (q22, 0.02)
+q1 = cl.robot.projectOnObstacle (q11, 0.001); q2 = cl.robot.projectOnObstacle (q22, 0.001)
+robot.isConfigValid(q1); robot.isConfigValid(q2)
 
-ps.setInitialConfig (q1); ps.addGoalConfig (q2); ps.solve ()
+ps.setInitialConfig (q1); ps.addGoalConfig (q2)
+ps.solve () 
+# PROBLEM !! not finding solution for environment_3d_window with mu=0.5 V0max=6.5 Projectionshooter ....  V0 or Vimp too much limiting ?? 'cause V0max=7 gives a too "easy" solution ...
 
+samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
+
+plotConeWaypoints (cl, 0, r, "wp", "friction_cone")
 
 #ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_envir3d_with_window.rdm')
 
