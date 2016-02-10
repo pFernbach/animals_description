@@ -8,7 +8,7 @@ from hpp.corbaserver.sphere import Robot
 #from hpp.corbaserver.monopod_mesh import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
-from viewer_display_library import normalizeDir, plotCone, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath, contactPosition
+from viewer_display_library import normalizeDir, plotCone, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath, contactPosition, addLight, plotSphere, plotSpheresWaypoints
 from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
 from parabola_plot_tools import parabPlotDoubleProjCones, parabPlotOriginCones
 import math
@@ -28,6 +28,7 @@ r = Viewer (ps)
 pp = PathPlayer (robot.client, r)
 r.loadObstacleModel ("animals_description","environment_3d","environment_3d")
 #r.loadObstacleModel ("animals_description","environment_3d_with_window","environment_3d_with_window")
+addLight (r, [-5,5,7,1,0,0,0], "li"); addLight (r, [5,-5,7,1,0,0,0], "li1")
 r(q11)
 
 q1 = cl.robot.projectOnObstacle (q11, 0.001); q2 = cl.robot.projectOnObstacle (q22, 0.001)
@@ -116,22 +117,23 @@ parabPlotOriginCones (cl, 0, theta, NconeOne, pointsConeOne, angles, i, 0.6, plt
 plt.show()
 
 # --------------------------------------------------------------------#
-
-## Add light to scene ##
-lightName = "li"
-r.client.gui.addLight (lightName, r.windowId, 0.001, [0.5,0.5,0.5,1])
-r.client.gui.addToGroup (lightName, r.sceneName)
-r.client.gui.applyConfiguration (lightName, [-2,2,5,1,0,0,0])
-#r.client.gui.applyConfiguration (lightName, [2,-2,5,1,0,0,0])
-r.client.gui.refresh ()
-#r.client.gui.removeFromGroup (lightName, r.sceneName)
-
-# --------------------------------------------------------------------#
 ## Video capture ##
+import time
+pp.dt = 0.01; pp.speed=0.5
+r(q1)
 r.startCapture ("capture","png")
-pp(1)
+r(q1); time.sleep(0.2); r(q1)
+pp(0)
+#pp(ps.numberPaths()-1)
+r(q2); time.sleep(1);
 r.stopCapture ()
-#ffmpeg -r 50 -i capture_0_%d.png -r 25 -vcodec libx264 video.mp4
+
+## ffmpeg commands
+ffmpeg -r 50 -i capture_0_%d.png -r 25 -vcodec libx264 video.mp4
+x=0; for i in *png; do counter=$(printf %04d $x); ln "$i" new"$counter".png; x=$(($x+1)); done
+ffmpeg -r 50 -i new%04d.png -r 25 -vcodec libx264 video.mp4
+mencoder video.mp4 -channels 6 -ovc xvid -xvidencopts fixed_quant=4 -vf harddup -oac pcm -o video.avi
+ffmpeg -i untitled.mp4 -vcodec libx264 -crf 24 video.mp4
 
 # --------------------------------------------------------------------#
 

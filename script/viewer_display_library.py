@@ -64,12 +64,12 @@ def plotFrame (r, lineNameSuffix, framePosition, ampl):
 # cl: corbaserver client
 # nPath: path number
 # r: viewer server
-# coneNameSufffix: string suffix used for cone name
+# coneNameSuffix: string suffix used for cone name
 # coneURDFname: "friction_cone" (mu = 0.5) or "friction_cone2" (mu = 1.2)
-def plotConeWaypoints (cl, nPath, r, coneNameSufffix, coneURDFname):
+def plotConeWaypoints (cl, nPath, r, coneNameSuffix, coneURDFname):
     wp = cl.problem.getWaypoints (nPath)
-    for i in np.arange(0, len(wp), 1):
-        plotCone (wp[i], cl, r, str(i)+'_'+coneNameSufffix, coneURDFname)
+    for i in np.arange(1, len(wp)-1, 1): # avoid (re-)plot start and goal
+        plotCone (wp[i], cl, r, str(i)+'_'+coneNameSuffix, coneURDFname)
 
 
 # --------------------------------------------------------------------#
@@ -79,11 +79,11 @@ def plotConeWaypoints (cl, nPath, r, coneNameSufffix, coneURDFname):
 # cl: corbaserver client
 # q: configuration of cone (position, orientation)
 # r: viewer server
-# coneNameSufffix: string suffix used for cone name
+# coneNameSuffix: string suffix used for cone name
 # coneURDFname: "friction_cone" (mu = 0.5) or "friction_cone2" (mu = 1.2)
-def plotCone (q, cl, r, coneNameSufffix, coneURDFname):
+def plotCone (q, cl, r, coneNameSuffix, coneURDFname):
     qCone = cl.robot.setOrientation (q)
-    coneName = "cone_"+coneNameSufffix
+    coneName = "cone_"+coneNameSuffix
     r.loadObstacleModel ("animals_description",coneURDFname,coneName)
     r.client.gui.applyConfiguration (coneName, qCone[0:7])
     r.client.gui.refresh ()
@@ -187,4 +187,51 @@ def contactPosition (q, cl, r):
     qConeContact[0:3] = (np.array(q[0:3]) - distContactCoM*n).tolist ()
     return qConeContact
 
+# --------------------------------------------------------------------#
+
+## Add light in viewer scene ##
+# giving the light configuration (position) and name
+# "r.client.gui.removeFromGroup (lightName, r.sceneName)" to remove light 
+# (if think it just removes the object carrying the light, not the light effect)
+## Parameters:
+# r: viewer server
+# q: light configuration (list)
+# lightName: light name (string)
+def addLight (r, q, lightName):
+    r.client.gui.addLight (lightName, r.windowId, 0.0001, [0.9,0.9,0.9,1])
+    r.client.gui.addToGroup (lightName, r.sceneName)
+    r.client.gui.applyConfiguration (lightName, q)
+    r.client.gui.refresh ()
+
+# --------------------------------------------------------------------#
+
+## Plot sphere ##
+# Example (plot small green sphere) "plotSphere (q, cl, r, sphereName, [0,1,0,1], 0.02)"
+## Parameters:
+# cl: corbaserver client
+# q: configuration of cone (position, orientation)
+# r: viewer server
+# sphereName: string suffix used for cone name
+# sphereColor: color of sphere
+# sphereSize: size of sphere
+def plotSphere (q, cl, r, sphereName, sphereColor, sphereSize):
+    r.client.gui.addSphere (sphereName,sphereSize,sphereColor)
+    r.client.gui.applyConfiguration (sphereName, q[0:7])
+    r.client.gui.addToGroup (sphereName, r.sceneName)
+    r.client.gui.refresh ()
+
+# --------------------------------------------------------------------#
+
+## Plot sphere at each waypoint of the path ##
+## Parameters:
+# cl: corbaserver client
+# nPath: path number
+# r: viewer server
+# sphereName: string suffix used for cone name
+# sphereColor: color of sphere
+# sphereSize: size of sphere
+def plotSpheresWaypoints (cl, nPath, r, sphereName, sphereColor, sphereSize):
+    wp = cl.problem.getWaypoints (nPath)
+    for i in np.arange(1, len(wp)-1, 1): # avoid (re-)plot start and goal
+        plotSphere (wp[i][0:7], cl, r, sphereName+'_'+str(i), sphereColor, sphereSize)
 

@@ -8,19 +8,20 @@ from hpp.corbaserver.sphere import Robot
 from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
 import numpy as np
-from viewer_display_library import normalizeDir, plotCone, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath
+from viewer_display_library import normalizeDir, plotCone, plotFrame, plotThetaPlane, shootNormPlot, plotStraightLine, plotConeWaypoints, plotSampleSubPath, contactPosition, addLight, plotSphere, plotSpheresWaypoints
 from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
 
 robot = Robot ('robot')
 robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -6, 4.5, -2.5, 1.6])
 ps = ProblemSolver (robot)
 cl = robot.client
+#cl.obstacle.loadObstacleModel('animals_description','cave','cave')
 
 from hpp.gepetto import Viewer, PathPlayer
 r = Viewer (ps)
 pp = PathPlayer (robot.client, r)
 r.loadObstacleModel ("animals_description","cave","cave")
-#cl.obstacle.loadObstacleModel('animals_description','cave','cave')
+addLight (r, [0.2,-13.5,-2.3,1,0,0,0], "li"); addLight (r, [0,-5,-2.5,1,0,0,0], "li1")
 
 # Configs : [x, y, z, qw, qx, qy, qz, nx, ny, nz, theta]
 q11 = [0.4, -5.2, -0.7, 1, 0, 0, 0, 0, 0, 1, 0] # cave entry
@@ -67,26 +68,24 @@ index = cl.robot.getConfigSize () - cl.robot.getExtraConfigSize ()
 q = q2[::]
 plotStraightLine ([q[index], q[index+1], q[index+2]], q, r, "normale")
 
-
-
-# --------------------------------------------------------------------#
-
-## Add light to scene ##
-lightName = "li5"
-r.client.gui.addLight (lightName, r.windowId, 0.001, [0.4,0.4,0.4,1])
-r.client.gui.addToGroup (lightName, r.sceneName)
-#r.client.gui.applyConfiguration (lightName, [1,0,0,1,0,0,0])
-r.client.gui.applyConfiguration (lightName, [0.2,-13.5,-2.3,1,0,0,0])
-r.client.gui.applyConfiguration (lightName, [0,-5,-2.5,1,0,0,0])
-r.client.gui.refresh ()
-#r.client.gui.removeFromGroup (lightName, r.sceneName)
-
 # --------------------------------------------------------------------#
 ## Video capture ##
+import time
+pp.dt = 0.01; pp.speed=0.5
+r(q1)
 r.startCapture ("capture","png")
-pp(1)
+r(q1); time.sleep(0.2); r(q1)
+pp(0)
+#pp(ps.numberPaths()-1)
+r(q2); time.sleep(1);
 r.stopCapture ()
-#ffmpeg -r 50 -i capture_0_%d.png -r 25 -vcodec libx264 video.mp4
+
+## ffmpeg commands
+ffmpeg -r 50 -i capture_0_%d.png -r 25 -vcodec libx264 video.mp4
+x=0; for i in *png; do counter=$(printf %04d $x); ln "$i" new"$counter".png; x=$(($x+1)); done
+ffmpeg -r 50 -i new%04d.png -r 25 -vcodec libx264 video.mp4
+mencoder video.mp4 -channels 6 -ovc xvid -xvidencopts fixed_quant=4 -vf harddup -oac pcm -o video.avi
+ffmpeg -i untitled.mp4 -vcodec libx264 -crf 24 video.mp4
 
 # --------------------------------------------------------------------#
 
