@@ -12,7 +12,8 @@ from viewer_display_library import normalizeDir, plotCone, plotFrame, plotThetaP
 from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
 
 robot = Robot ('robot')
-robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -6, 4.5, -2.5, 1.6])
+#robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -6, 4.5, -2.5, 1.6]) # low end
+robot.setJointBounds('base_joint_xyz', [-2.6, 2.6, -6, 4.5, -2.5, 7]) # top end
 ps = ProblemSolver (robot)
 cl = robot.client
 #cl.obstacle.loadObstacleModel('animals_description','cave','cave')
@@ -23,16 +24,22 @@ pp = PathPlayer (robot.client, r)
 r.loadObstacleModel ("animals_description","cave","cave")
 addLight (r, [0.2,-13.5,-2.3,1,0,0,0], "li"); addLight (r, [0,-5,-2.5,1,0,0,0], "li1")
 
+
 # Configs : [x, y, z, qw, qx, qy, qz, nx, ny, nz, theta]
-q11 = [0.4, -5.2, -0.7, 1, 0, 0, 0, 0, 0, 1, 0] # cave entry
+q11 = [-0.18, 3.5, -0.11, 1, 0, 0, 0, 0, 0, 1, 0] # cave entry
 r(q11)
-q22 = [-0.18, 3.5, -0.11, 1, 0, 0, 0, 0, 0, 1, 0] # cave end
+#q22 = [0.4, -5.2, -0.7, 1, 0, 0, 0, 0, 0, 1, 0] # cave low end
+r(q22)
+q22 = [0.27, -5.75, 5.90, 1, 0, 0, 0, 0, 0, 1, 0] # cave top end
 r(q22)
 
-q1 = cl.robot.projectOnObstacle (q11, 0.005)
+selectConFigurationShooter("ContactConfigurationShooter")
+selectConFigurationShooter("ConfigurationProjectionShooter")
+
+q1 = cl.robot.projectOnObstacle (q11, 0.002)
 robot.isConfigValid(q1)
 r(q1)
-q2 = cl.robot.projectOnObstacle (q22, 0.005)
+q2 = cl.robot.projectOnObstacle (q22, 0.002)
 robot.isConfigValid(q2)
 r(q2)
 
@@ -60,7 +67,7 @@ plotFrame (r, "frame", [0,0,4], 0.5)
 
 plotThetaPlane (q1, q2, r, "ThetaPlane")
 
-plotCone (q, cl, r, "yep", "friction_cone2")
+plotCone (q2, cl, r, "yep", "friction_cone2")
 plotConeWaypoints (cl, 0, r, "wp", "friction_cone")
 plotConeWaypoints (cl, 1, r, "wp2", "friction_cone")
 
@@ -183,4 +190,16 @@ pointsConeTwo = [qt2 [0]*math.cos(theta) + qt2 [1]*math.sin(theta), qt2 [2], xPl
 parabPlotDoubleProjCones (cl, 0, theta, NconeOne, pointsConeOne, NconeTwo, pointsConeTwo, plt)
 
 plt.show()
+
+
+"""
+qt1=[0.19363154576461386, 2.1381172965900914, 0.8185263076039244, 0.987817373688682, 0.12561506072309803, 0.09135826678990354, -0.009558234537400692, 0.17808924990666253, -0.24991592624028666, 0.9517490472173545, 0.004138178316521193]
+qt2=[-0.18901944104859197, -1.3885000128662692, -0.7762002405168962, 0.17350433890412179, 0.18060319294102567, -0.08395116001459575, 0.9644848022717383, 0.3192462886296063, -0.2246101111247333, 0.9206693788634207, 2.8066854804400845]
+ps.setInitialConfig (qt1); ps.addGoalConfig (qt2)
+ps.solve ()
+samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
+r(ps.configAtParam(0,3.0))
+robot.isConfigValid(ps.configAtParam(0,3.0))
+"""
+
 

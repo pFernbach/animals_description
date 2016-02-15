@@ -14,15 +14,15 @@ import math
 import numpy as np
 
 robot = Robot ('robot')
-robot.setJointBounds('base_joint_xyz', [-6, 6.7, -2.5, 3.2, 0, 8]) # ultimate goal!
-#robot.setJointBounds('base_joint_xyz', [1.6, 6.7, -2.2, 1.5, 0, 3]) # first goal
-#robot.setJointBounds('base_joint_xyz', [-0.3, 6.7, -2.2, 2.4, 0, 3]) # second goal
-#robot.setJointBounds('base_joint_xyz', [-2.6, 6.7, -2.2, 2.4, 0, 3]) # third goal
-#robot.setJointBounds('base_joint_xyz', [-6, 6.9, -2.8, 3.2, 0, 3]) # start to bottom
+robot.setJointBounds('base_joint_xyz', [-6, 6.8, -2.5, 3.2, 0, 8]) # ultimate goal!
+#robot.setJointBounds('base_joint_xyz', [1.6, 6.8, -2.2, 1.5, 0, 3]) # first goal
+#robot.setJointBounds('base_joint_xyz', [-0.3, 6.8, -2.2, 2.4, 0, 3]) # second goal
+#robot.setJointBounds('base_joint_xyz', [-2.6, 6.8, -2.2, 2.4, 0, 3]) # third goal
+#robot.setJointBounds('base_joint_xyz', [-6, 6.8, -2.8, 3.2, 0, 3]) # start to bottom
 #robot.setJointBounds('base_joint_xyz', [-6, -2.2, -2.4, 3, 0, 8]) # bottom to ultimate
 #robot.setJointBounds('base_joint_xyz', [-5, -2.2, -0.1, 2.8, 0, 6]) # bottom to middle column
 #robot.setJointBounds('base_joint_xyz', [-5, -2.2, -0.1, 2.8, 0, 3]) # bottom to bottom 1
-#robot.setJointBounds('base_joint_xyz', [-6, 6.7, -2.5, 3.2, 0, 3]) # first to bottom
+#robot.setJointBounds('base_joint_xyz', [-6, 6.8, -2.5, 3.2, 0, 3]) # first to bottom
 
 ps = ProblemSolver (robot)
 cl = robot.client
@@ -35,7 +35,7 @@ r.loadObstacleModel ("animals_description","scene_jump_harder","scene_jump_harde
 addLight (r, [-5,0,2,1,0,0,0], "li"); addLight (r, [2,-2,5,1,0,0,0], "li1")
 
 # Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
-q11 = [5.7, 0.5, 0.5, 0, 0, 0, 1, 0, 0, 1, 0] # start
+q11 = [6.2, 0.5, 0.5, 0, 0, 0, 1, 0, 0, 1, 0] # start
 #q11 = [-3.5, 1.7, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # bottom of column
 r(q11)
 #q22 = [2.6, -1.4, 0.35, 0, 0, 0, 1, 0, 0, 1, 0] # first goal
@@ -45,13 +45,13 @@ r(q11)
 #q22 = [-3.3, 1.5, 3.4, 0, 0, 0, 1, 0, 0, 1, 0] # in column
 #q22 = [-4.2, 0.9, 1.7, 0, 0, 0, 1, 0, 0, 1, 0] # bottom 1 of column
 #q22 = [-4.4, 0.9, 4.1, 0, 0, 0, 1, 0, 0, 1, 0] # bottom 3 of column
-q22 = [-4.4, -1.8, 6.5, 0, 0, 0, 1, 0, 0, 1, 0] # ultimate goal!
+q22 = [-4.4, -1.5, 6.5, 0, 0, 0, 1, 0, 0, 1, 0] # ultimate goal!
 r(q22)
-
-
 
 q1 = cl.robot.projectOnObstacle (q11, 0.001); q2 = cl.robot.projectOnObstacle (q22, 0.001)
 
+#cl.problem.setFrictionCoef(0.5)
+cl.problem.setMaxVelocityLim(7.0)
 ps.setInitialConfig (q1); ps.addGoalConfig (q2)
 ps.solve ()
 
@@ -70,6 +70,10 @@ q22 = [-3.5, 1.7, 0.4, 0, 0, 0, 1, 0, 0, 1, 0]
 cl.problem.generateValidConfig(2)
 
 r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
+
+
+
+-5.36273,1.76984,3.28844,0.707032,0.0102817,-0.707032,0.0102817,-0.999577,-0.0290779,-0,-4.57484e+238
 
 
 r(ps.configAtParam(0,0.001))

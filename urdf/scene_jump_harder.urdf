@@ -9,14 +9,42 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://animals_description/meshes/scene_jump8_2.dae"/>
+        <mesh filename="package://animals_description/meshes/scene_jump10.dae"/>
+      </geometry>
+    </visual>
+    <!--<collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/scene_jump9.dae"/>
+      </geometry>
+    </collision>--> <!-- avoid duplicating computations, and sj9.dae is shitty -->
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/scene_jump10.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!--<joint name="j_decor_one" type="fixed">
+    <parent link="base_link"/>
+    <child link="l_decor_one"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_one">
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/scene_jump9.stl"/>
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://animals_description/meshes/scene_jump8_2.dae"/>
+        <mesh filename="package://animals_description/meshes/scene_jump9.stl"/>
       </geometry>
     </collision>
-  </link>
+  </link>-->
+
 </robot>

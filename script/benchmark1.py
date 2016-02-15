@@ -35,7 +35,7 @@ r(q1)
 ps.setInitialConfig (q1); ps.addGoalConfig (q2)
 
 plotSphere (q2, cl, r, "sphere1", [0,1,0,1], 0.02)
-nPointsPlot = 50
+nPointsPlot = 60
 offsetOrientedPath = 2 # If remove oriented path computation in ProblemSolver, set to 1 instead of 2
 
 # First parabola: vmax = 8m/s,  mu = 1.2
@@ -51,25 +51,25 @@ print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))
 
 # Second parabola: vmax = 8m/s,  mu = 0.5
 plotCone (q1, cl, r, "cone1", "friction_cone"); plotCone (q2, cl, r, "cone12", "friction_cone")
-cl.problem.setFrictionCoef(0.5)
+cl.problem.setFrictionCoef(0.5); cl.problem.setMaxVelocityLim(8)
 ps.clearRoadmap();
 solveTime = ps.solve ()
 pahtId = ps.numberPaths()-offsetOrientedPath
-samples = plotSampleSubPath (cl, r, pahtId, nPointsPlot, "path1", [0.2,0.3,0.8,1])
+samples = plotSampleSubPath (cl, r, pahtId, nPointsPlot, "path1", [0.1,0.8,0.8,1])
 plotConeWaypoints (cl, pahtId, r, "wp1", "friction_cone")
-plotSpheresWaypoints (cl, pahtId, r, "sphere_wp1", [0.2,0.3,0.8,1], 0.02)
+plotSpheresWaypoints (cl, pahtId, r, "sphere_wp1", [0.1,0.8,0.8,1], 0.02)
 print "solve duration: " + str(solveTime)
 print "path length: " + str(ps.pathLength(pahtId))
 print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))
 
 # Third parabola(s): vmax = 6.5m/s,  mu = 0.5
-cl.problem.setMaxVelocityLim(6.5)
+cl.problem.setFrictionCoef(0.5); cl.problem.setMaxVelocityLim(6.5)
 ps.clearRoadmap();
 solveTime = ps.solve ()
 pahtId = ps.numberPaths()-offsetOrientedPath
-samples = plotSampleSubPath (cl, r, pahtId, nPointsPlot, "path2", [0.2,0.8,0.4,1])
+samples = plotSampleSubPath (cl, r, pahtId, nPointsPlot, "path2", [0.2,0.8,0.2,1])
 plotConeWaypoints (cl, pahtId, r, "wp2", "friction_cone")
-plotSpheresWaypoints (cl, pahtId, r, "sphere_wp2", [0.2,0.8,0.4,1], 0.02)
+plotSpheresWaypoints (cl, pahtId, r, "sphere_wp2", [0.2,0.8,0.2,1], 0.02)
 print "solve duration: " + str(solveTime)
 print "path length: " + str(ps.pathLength(pahtId))
 print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))

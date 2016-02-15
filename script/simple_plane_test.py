@@ -19,6 +19,9 @@ robot.setJointBounds('base_joint_xyz', [-3.9, 3.9, -3.9, 3.9, 2, 9])
 ps = ProblemSolver (robot)
 cl = robot.client
 
+#ps.selectConFigurationShooter ("ContactConfigurationShooter")
+#ps.selectPathPlanner ("ConfigurationProjectionShooter") #TODO
+
 # Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
 #q1 = [-1.5, -1.5, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]; q2 = [2.6, 3.7, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]
 #q11 = [2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0] # theta = Pi
@@ -58,6 +61,8 @@ ps.getWaypoints (0)
 
 ps.clearRoadmap()
 
+q= [2.65346,-0.823813,7.48169,-0.236625,0.381534,0.845472,0.289165,-0.329554,0.536459,-0.444451,0.339103]
+
 ## 3D Plot tools ##
 q0 = [0, 0, 5, 0, 0, 0, 1, 0, 0, 1, 0];
 r(q0)
@@ -73,6 +78,14 @@ plotSphere (q2, cl, r, "sphere1", [0,1,0,1], 0.1)
 index = cl.robot.getConfigSize () - cl.robot.getExtraConfigSize ()
 q = qa[::]
 q = [-4.77862,-1.56995,2.87339,-0.416537,-0.469186,-0.619709,0.471511,-0.197677,-0.0998335,0.97517,0.619095]
+
+qq =[2.65346,-0.823813,7.48169,-0.236625,0.381534,0.845472,0.289165,-0.329554,0.536459,-0.444451,0.339103]
+plotStraightLine ([-0.329554, 0.536459, -0.444451], qq, r, "normale")
+
+theta = -0.638354; tanTheta = math.tan(theta)
+xPlus = -0.5; xMinus = -0.5; zPlus = -0.0756764; zMinus = -1.08921
+plotStraightLine ([xPlus, xPlus*tanTheta, zPlus], qq, r, "inter12")
+plotStraightLine ([xMinus, xMinus*tanTheta, zMinus], qq, r, "inter22")
 
 qprojCorba=[-4.778619492059025, -1.5699444231861588, 2.873387956706481, 0.9470998051218645, 0.017748399125124163, -0.10999926666084152, 0.3009769340010935, -0.19767685053184691, -0.0998334947491579, 0.9751703113251448, 0.619095]
 plotStraightLine ([q [index],q [index+1],q [index+2]], q, r, "normale2")

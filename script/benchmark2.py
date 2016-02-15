@@ -1,7 +1,7 @@
 #/usr/bin/env python
 # Benchmark2. Script which goes with animals_description package.
 # The script launches a point-robot and the environment containing an environment 3d (with windows ?).
-# It defines init and final configs, and solve them for .. couples of mu / vmax (parabola constraints).
+# It defines init and final configs, and solve them for 2 couples of mu / vmax (parabola constraints).
 
 
 from hpp.corbaserver.sphere import Robot
@@ -39,7 +39,7 @@ plotSphere (q2, cl, r, "sphere_q2", [0,1,0,1], 0.02) # same as robot
 nPointsPlot = 50
 offsetOrientedPath = 2 # If remove oriented path computation in ProblemSolver, set to 1 instead of 2
 
-# First parabola: vmax = 8m/s,  mu = 1.2
+# First parabola(s): vmax = 8m/s,  mu = 1.2
 plotCone (q1, cl, r, "cone2", "friction_cone2"); plotCone (q2, cl, r, "cone22", "friction_cone2")
 solveTime = ps.solve ()
 pahtId = ps.numberPaths()-offsetOrientedPath # path without orientation stuff
@@ -49,8 +49,9 @@ plotSpheresWaypoints (cl, pahtId, r, "sphere_wp0", [0,0,1,1], 0.02)
 print "solve duration: " + str(solveTime)
 print "path length: " + str(ps.pathLength(pahtId))
 print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))
+print "number of nodes: " + str(ps.numberNodes ())
 
-# Second parabola: vmax = 8m/s,  mu = 0.5
+# Second parabola(s): vmax = 8m/s,  mu = 0.5
 plotCone (q1, cl, r, "cone1", "friction_cone"); plotCone (q2, cl, r, "cone12", "friction_cone")
 cl.problem.setFrictionCoef(0.5)
 ps.clearRoadmap();
@@ -62,8 +63,10 @@ plotSpheresWaypoints (cl, pahtId, r, "sphere_wp1", [0.2,0.3,0.8,1], 0.02)
 print "solve duration: " + str(solveTime)
 print "path length: " + str(ps.pathLength(pahtId))
 print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))
+print "number of nodes: " + str(ps.numberNodes ())
 
 # Third parabola(s): vmax = 6.5m/s,  mu = 0.5
+# Not solvable with windows (and without srand)
 cl.problem.setMaxVelocityLim(6.5)
 ps.clearRoadmap();
 solveTime = ps.solve ()
@@ -74,6 +77,7 @@ plotSpheresWaypoints (cl, pahtId, r, "sphere_wp2", [0.2,0.8,0.4,1], 0.02)
 print "solve duration: " + str(solveTime)
 print "path length: " + str(ps.pathLength(pahtId))
 print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))
+print "number of nodes: " + str(ps.numberNodes ())
 
 
 ## 3D Plot tools ##
@@ -82,5 +86,5 @@ print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))
 
 #plotThetaPlane (q1, q2, r, "ThetaPlane2")
 
-
+#r.client.gui.removeFromGroup("path0",r.sceneName)
 

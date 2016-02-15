@@ -1,9 +1,9 @@
 #/usr/bin/env python
 # RUNS version! launch command: "python -i environment3d_runs.py"
-# Script which goes with animals_description package.
-# (Benchmark2). Script which goes with animals_description package.
+# Script which goes with animals_description package, runs version of Benchmark2.
 # The script launches a point-robot and the environment containing an environment 3d (with windows ?).
 # It defines init and final configs, and solve them for .. couples of mu / vmax (parabola constraints).
+# Do not forget to launch it in Release mode !
 
 from hpp.corbaserver.sphere import Robot
 from hpp.corbaserver import Client
@@ -17,11 +17,6 @@ ps = ProblemSolver (robot)
 cl = robot.client
 cl.obstacle.loadObstacleModel('animals_description','environment_3d','')
 #cl.obstacle.loadObstacleModel('animals_description','environment_3d_with_window','')
-
-#ps.selectPathValidation ("Dichotomy", 0.) # probably not relevant
-#ps.selectPathPlanner ("ParabolaPathPlanner")
-#ps.selectPathPlanner ("ParabolaPathPlanner") # config shooter #TODO
-
 # Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
 q11 = [-5, 3.1, 4.2, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [5.2, -5.2, 4, 0, 0, 0, 1, 0, 0, 1, 0]
 
