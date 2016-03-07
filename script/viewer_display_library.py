@@ -45,17 +45,22 @@ def plotPath (cl, nPath, r, lineNamePrefix, dt):
 ## Plot global frame (in white, x darker) ##
 ## Parameters:
 # r: viewer server
-# lineNameSuffix: string suffix used for line name, allowing to plot several frames
+# frameGroupName: string used for group name, allowing to plot several frames
 # framePosition: the [x, y, z] absolute position of the frame
 # ampl: amplitude of the frame axis
-def plotFrame (r, lineNameSuffix, framePosition, ampl):
+def plotFrame (r, frameGroupName, framePosition, ampl):
+    r.client.gui.createGroup (frameGroupName)
     x = framePosition [0]; y = framePosition [1]; z = framePosition [2];
-    r.client.gui.addLine("frame1"+lineNameSuffix,[x,y,z], [x+ampl,y,z],[1,0,0,1])
-    r.client.gui.addToGroup ("frame1"+lineNameSuffix, r.sceneName)
-    r.client.gui.addLine("frame2"+lineNameSuffix,[x,y,z], [x,y+ampl,z],[0,1,0,1])
-    r.client.gui.addToGroup ("frame2"+lineNameSuffix, r.sceneName)
-    r.client.gui.addLine("frame3"+lineNameSuffix,[x,y,z], [x,y,z+ampl],[0,0,1,1])
-    r.client.gui.addToGroup ("frame3"+lineNameSuffix, r.sceneName)
+    r.client.gui.addLine('frame1',[x,y,z], [x+ampl,y,z],[1,0,0,1])
+    r.client.gui.addToGroup ('frame1', frameGroupName)
+    r.client.gui.addLine('frame2',[x,y,z], [x,y+ampl,z],[0,1,0,1])
+    r.client.gui.addToGroup ("frame2", frameGroupName)
+    r.client.gui.addLine('frame3',[x,y,z], [x,y,z+ampl],[0,0,1,1])
+    r.client.gui.addToGroup ('frame3', frameGroupName)
+    r.client.gui.addSceneToWindow(frameGroupName,r.windowId)
+    #r.client.gui.removeFromGroup('frame1',r.sceneName) # remove duplicata in sceneName NOT WORKING
+    #r.client.gui.removeFromGroup('frame2',r.sceneName)
+    #r.client.gui.removeFromGroup('frame3',r.sceneName)
 
 # --------------------------------------------------------------------#
 
@@ -64,12 +69,16 @@ def plotFrame (r, lineNameSuffix, framePosition, ampl):
 # cl: corbaserver client
 # nPath: path number
 # r: viewer server
-# coneNameSuffix: string suffix used for cone name
+# coneGroupName: string used for cone group name ('cone_wp_group')
 # coneURDFname: "friction_cone" (mu = 0.5) or "friction_cone2" (mu = 1.2)
-def plotConeWaypoints (cl, nPath, r, coneNameSuffix, coneURDFname):
+def plotConeWaypoints (cl, nPath, r, coneGroupName, coneURDFname):
     wp = cl.problem.getWaypoints (nPath)
+    r.client.gui.createGroup (coneGroupName)
     for i in np.arange(1, len(wp)-1, 1): # avoid (re-)plot start and goal
-        plotCone (wp[i], cl, r, str(i)+'_'+coneNameSuffix, coneURDFname)
+        coneName = coneGroupName+'_'+"cone_"+str(i)
+        plotCone (wp[i], cl, r, coneName, coneURDFname)
+        r.client.gui.addToGroup (coneName, coneGroupName)
+    r.client.gui.addSceneToWindow(coneGroupName,r.windowId)
 
 
 # --------------------------------------------------------------------#
@@ -79,15 +88,17 @@ def plotConeWaypoints (cl, nPath, r, coneNameSuffix, coneURDFname):
 # cl: corbaserver client
 # q: configuration of cone (position, orientation)
 # r: viewer server
-# coneNameSuffix: string suffix used for cone name
+# coneName: string used for cone name (e.g. "cone_wp0/this_cone")
 # coneURDFname: "friction_cone" (mu = 0.5) or "friction_cone2" (mu = 1.2)
-def plotCone (q, cl, r, coneNameSuffix, coneURDFname):
+def plotCone (q, cl, r, coneName, coneURDFname):
     qCone = cl.robot.setOrientation (q)
-    coneName = "cone_"+coneNameSuffix
     r.loadObstacleModel ("animals_description",coneURDFname,coneName)
     r.client.gui.applyConfiguration (coneName, qCone[0:7])
     r.client.gui.refresh ()
-
+#Could be:
+#gui.addMesh (coneName,"/local/mcampana/devel/hpp/src/animals_description/meshes/cone2.dae")
+#gui.applyConfiguration (coneName, q11[0:7]); gui.addToGroup (coneName, r.sceneName)
+#gui.refresh ()
 # --------------------------------------------------------------------#
 
 ## Plot straight line ##
@@ -227,11 +238,36 @@ def plotSphere (q, cl, r, sphereName, sphereColor, sphereSize):
 # cl: corbaserver client
 # nPath: path number
 # r: viewer server
-# sphereName: string suffix used for cone name
+# sphereGroupName: string used for sphere group name
 # sphereColor: color of sphere
 # sphereSize: size of sphere
-def plotSpheresWaypoints (cl, nPath, r, sphereName, sphereColor, sphereSize):
+def plotSpheresWaypoints (cl, nPath, r, sphereGroupName, sphereColor, sphereSize):
     wp = cl.problem.getWaypoints (nPath)
+    r.client.gui.createGroup (sphereGroupName)
     for i in np.arange(1, len(wp)-1, 1): # avoid (re-)plot start and goal
-        plotSphere (wp[i][0:7], cl, r, sphereName+'_'+str(i), sphereColor, sphereSize)
+        sphereName = sphereGroupName+'_'+"sphere_"+str(i)
+        plotSphere (wp[i][0:7], cl, r, sphereName, sphereColor, sphereSize)
+        r.client.gui.addToGroup (sphereName, sphereGroupName)
+        #r.client.gui.removeFromGroup(sphereName,r.sceneName) # remove duplicata in sceneName NOT WORKING
+    r.client.gui.addSceneToWindow(sphereGroupName,r.windowId)
+
+# --------------------------------------------------------------------#
+
+## Plot cone at each node of the roadmap ##
+## Parameters:
+# cl: corbaserver client
+# r: viewer server
+# coneGroupName: string used for cone group name
+# coneURDFname: "friction_cone" (mu = 0.5) or "friction_cone2" (mu = 1.2)
+def plotConesRoadmap (cl, r, coneGroupName, coneURDFname):
+    RM_nodes = cl.problem.nodes ()
+    r.client.gui.createGroup (coneGroupName)
+    for i in range(2,len(RM_nodes)): # avoid first nodes
+        node_i = RM_nodes [i]
+        coneName_i = "cone_RM_"+str(i)
+        plotCone (node_i, cl, r, coneName_i, coneURDFname)
+        r.client.gui.addToGroup (coneName_i, coneGroupName)
+    r.client.gui.addSceneToWindow(coneGroupName,r.windowId)
+
+
 

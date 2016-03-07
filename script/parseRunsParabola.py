@@ -23,12 +23,18 @@ def main ():
     pathLengthPrefix = 'path length: '
     numberWaypointsPrefix = 'number of waypoints: '
     numberNodesPrefix = 'number of nodes: '
+    failCollisionNumberPrefix = 'number of fails due to collision: '
+    failIntersectionNumberPrefix = 'number of fails due to cone intersection: '
+    failConstraintNumberPrefix = 'number of fails due to constraints: '
     
     ## Compute data:
     solveDurationVector = parseRun (solveDurationPrefix)
     pathlengthVector = parseRun (pathLengthPrefix)
     numberWaypointsVector = parseRun (numberWaypointsPrefix)
     numberNodesVector = parseRun (numberNodesPrefix)
+    numberFailCollisionVector = parseRun (failCollisionNumberPrefix)
+    numberFailIntersectionVector = parseRun (failIntersectionNumberPrefix)
+    numberFailConstraintVector = parseRun (failConstraintNumberPrefix)
     
     ## Display data:
     print "Number of data: " + str(len (solveDurationVector))+'\n'
@@ -48,6 +54,18 @@ def main ():
     print "number of nodes"
     print "mean: " + str(np.mean(numberNodesVector))
     print "std: " + str(np.std(numberNodesVector))+'\n'
+    
+    print "number of fails due to collision"
+    print "mean: " + str(np.mean(numberFailCollisionVector))
+    print "std: " + str(np.std(numberFailCollisionVector))+'\n'
+    
+    print "number of fails due to cone intersection"
+    print "mean: " + str(np.mean(numberFailIntersectionVector))
+    print "std: " + str(np.std(numberFailIntersectionVector))+'\n'
+    
+    print "number of fails due to constraints"
+    print "mean: " + str(np.mean(numberFailConstraintVector))
+    print "std: " + str(np.std(numberFailConstraintVector))+'\n'
 
 
 # --------------------------------------------------------------------#

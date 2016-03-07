@@ -19,7 +19,7 @@ cl = robot.client
 
 # Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
 #q1 = [-1.5, -1.5, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]; q2 = [2.6, 3.7, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]
-q11 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [2.5, 2.7, 8, 0, 0, 0, 1, 0, 0, 1, 0] # theta ~= 0
+q11 = [-1.8, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [1.8, 2.7, 8, 0, 0, 0, 1, 0, 0, 1, 0] # theta ~= 0
 
 from hpp.gepetto import Viewer, PathPlayer
 r = Viewer (ps)
@@ -38,7 +38,10 @@ plotSphere (q2, cl, r, "sphere1", [0,1,0,1], 0.02)
 nPointsPlot = 60
 offsetOrientedPath = 2 # If remove oriented path computation in ProblemSolver, set to 1 instead of 2
 
-# First parabola: vmax = 8m/s,  mu = 1.2
+plotFrame (r, "_", [0,0,3.1], 0.5)
+
+# First parabola: vmax = 7m/s,  mu = 1.2
+cl.problem.setFrictionCoef(1.2); cl.problem.setMaxVelocityLim(7)
 plotCone (q1, cl, r, "cone2", "friction_cone2"); plotCone (q2, cl, r, "cone22", "friction_cone2")
 solveTime = ps.solve ()
 pahtId = ps.numberPaths()-offsetOrientedPath # path without orientation stuff
@@ -49,9 +52,9 @@ print "solve duration: " + str(solveTime)
 print "path length: " + str(ps.pathLength(pahtId))
 print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))
 
-# Second parabola: vmax = 8m/s,  mu = 0.5
+# Second parabola: vmax = 7m/s,  mu = 0.5
 plotCone (q1, cl, r, "cone1", "friction_cone"); plotCone (q2, cl, r, "cone12", "friction_cone")
-cl.problem.setFrictionCoef(0.5); cl.problem.setMaxVelocityLim(8)
+cl.problem.setFrictionCoef(0.5); cl.problem.setMaxVelocityLim(7)
 ps.clearRoadmap();
 solveTime = ps.solve ()
 pahtId = ps.numberPaths()-offsetOrientedPath
@@ -62,8 +65,8 @@ print "solve duration: " + str(solveTime)
 print "path length: " + str(ps.pathLength(pahtId))
 print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))
 
-# Third parabola(s): vmax = 6.5m/s,  mu = 0.5
-cl.problem.setFrictionCoef(0.5); cl.problem.setMaxVelocityLim(6.5)
+# Third parabola(s): vmax = 6.2m/s,  mu = 0.5
+cl.problem.setFrictionCoef(0.5); cl.problem.setMaxVelocityLim(6.0)
 ps.clearRoadmap();
 solveTime = ps.solve ()
 pahtId = ps.numberPaths()-offsetOrientedPath
@@ -74,10 +77,11 @@ print "solve duration: " + str(solveTime)
 print "path length: " + str(ps.pathLength(pahtId))
 print "number of waypoints: " + str(len(ps.getWaypoints (pahtId)))
 
+cl.problem.getResultValues ()
 
 ## 3D Plot tools ##
 
-#plotFrame (r, "_", [0,0,3.1], 0.5)
+addLight (r, [0,0,4,1,0,0,0], "li0"); addLight (r, [0,0,4,1,0,0,0], "li00"); addLight (r, [0,0,4,1,0,0,0], "li000")
 
 #plotThetaPlane (q1, q2, r, "ThetaPlane2")
 

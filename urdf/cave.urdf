@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="decor"> <!-- puzzle hard environment, slot size=0.16x0.6 -->
+<robot name="decor">
   <material name="Dark">
     <color rgba="0.7 0.1 0.7 0.4"/>
   </material>
@@ -8,18 +8,20 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-		<mesh filename="package://animals_description/meshes/cave_mono3_3.dae"/>
+		<!--<mesh filename="package://animals_description/meshes/cave_mono3_3.dae"/>-->
+		<mesh filename="package://animals_description/meshes/cave_mono_short_1.dae"/>
       </geometry>
       <material name="Dark"/>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://animals_description/meshes/cave_mono3_3.stl"/>
+        <mesh filename="package://animals_description/meshes/cave_mono_short_1.stl"/>
       </geometry>
     </collision>
   </link>
   
+  <!--
   <joint name="j_decor_one" type="fixed">
     <parent link="decor_base"/>
     <child link="l_decor_one"/>
@@ -33,11 +35,11 @@
         <mesh filename="package://animals_description/meshes/cave_mono3_3_cylinder_item.dae"/>
       </geometry>
     </visual>
-    <!--<collision>
+    <collision>
       <origin xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://animals_description/meshes/cave_mono3_3.stl"/>
       </geometry>
-    </collision>-->
-  </link>
+    </collision>
+  </link>-->
 </robot>

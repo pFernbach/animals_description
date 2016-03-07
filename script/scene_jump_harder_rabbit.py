@@ -13,7 +13,7 @@ import math
 import numpy as np
 Pi = math.pi
 
-robot = Robot ('robot')
+robot = Robot ('rabbit')
 #robot.setJointBounds('base_joint_xyz', [-6, 6.9, -2.5, 3.2, 0, 8]) # ultimate goal!
 #robot.setJointBounds('base_joint_xyz', [1.6, 6.9, -2.2, 1.5, 0, 3]) # first goal
 #robot.setJointBounds('base_joint_xyz', [-0.3, 6.9, -2.2, 2.4, 0, 3]) # second goal
@@ -190,8 +190,27 @@ ffmpeg -i untitled.mp4 -vcodec libx264 -crf 24 video.mp4
 # --------------------------------------------------------------------#
 
 ## Export to Blender ##
-r.client.gui.writeNodeFile(0, 'scene.osg')
-# osgconvd -O NoExtras scene.osg scene.dae
+blender/urdf_to_blender.py -p /local/mcampana/devel/hpp/videos/ -i /local/mcampana/devel/hpp/src/animals_description/urdf/rabbit.urdf -o robot_blend.py
+r.client.gui.writeNodeFile("rabbit", "rabbit.dae")
+r.client.gui.writeNodeFile("0_scene_hpp_", "scene.dae")  #r.client.gui.getNodeList()
+r.client.gui.setCaptureTransform("testFrames",["0_scene_hpp_"]) # 2nd arg: all nodes recorded
+gui.setCaptureTransform ("path.yaml", "rabbit")
+# Frame by Frame
+for i in range(0,100):
+       #update robot configuration
+        gui.refresh ()
+        gui.captureTransform ()
+
+# Capture on refresh
+gui.captureTransformOnRefresh(true)
+for i in range(0,100):
+       #update robot configuration
+        gui.refresh ()
+
+gui.captureTransformOnRefresh(false)
+
+#r.client.gui.writeNodeFile(0, 'scene.osg') 
+#osgconvd -O NoExtras scene.osg scene.dae
 from hpp.gepetto.blender.exportmotion import exportStates, exportPath
 exportPath(r, cl.robot, cl.problem, 0, 1, 'path2.txt')
 exportStates(r, cl.robot, q11, 'configs.txt')

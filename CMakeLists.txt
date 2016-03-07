@@ -63,6 +63,11 @@ install (FILES
   DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/sphere)
 
 install (FILES
+  src/hpp/corbaserver/sphere_mesh/robot.py
+  src/hpp/corbaserver/sphere_mesh/__init__.py
+  DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/sphere_mesh)
+
+install (FILES
   src/hpp/corbaserver/ant_sphere/robot.py
   src/hpp/corbaserver/ant_sphere/__init__.py
   DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/ant_sphere)

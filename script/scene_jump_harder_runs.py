@@ -23,13 +23,15 @@ q11 = [6.2, 0.5, 0.5, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [-4.4, -1.5, 6.5, 0, 0, 0, 
 q1 = cl.robot.projectOnObstacle (q11, 0.001); q2 = cl.robot.projectOnObstacle (q22, 0.001)
 ps.setInitialConfig (q1); ps.addGoalConfig (q2)
 
-vmax = 7.0; mu = 1.2
-#vmax = 6.5; mu = 0.5
-#cl.problem.setFrictionCoef(mu); cl.problem.setMaxVelocityLim(vmax)
+#vmax = 7.0; mu = 1.2 # results1.txt
+#vmax = 7.0; mu = 0.5 # results2.txt
+#vmax = 6.5; mu = 1.2 # results3.txt
+vmax = 6.5; mu = 0.5
+cl.problem.setFrictionCoef(mu); cl.problem.setMaxVelocityLim(vmax)
 
 toSeconds = np.array ([60*60,60,1,1e-3])
 offsetOrientedPath = 2 # If remove oriented path computation in ProblemSolver, set to 1 instead of 2
-imax=3;
+imax=40;
 f = open('results.txt','a')
     
 # Assuming that seed in modified directly in HPP (e.g. in core::PathPlanner::solve or ProblemSolver constr)
@@ -42,8 +44,10 @@ for i in range(0, imax):
     pathLength = ps.pathLength (pathId)
     pathNumberWaypoints = len(ps.getWaypoints (pathId))
     roadmapNumberNodes = ps.numberNodes ()
-    #TODO: number collisions (checked ???)
-    #TODO: number parabola that has failed (because of which constraint ??)
+    results = cl.problem.getResultValues ()
+    failCollisionNumber = results [0]
+    failIntersectionNumber = results [1]
+    failConstraintNumber = results [2]
     
     #ps.addPathOptimizer("Prune")
     #ps.optimizePath (pathId)
@@ -56,6 +60,9 @@ for i in range(0, imax):
     f.write('path length: '+str(pathLength)+'\n')
     f.write('number of waypoints: '+str(pathNumberWaypoints)+'\n')
     f.write('number of nodes: '+str(roadmapNumberNodes)+'\n')
+    f.write('number of fails due to collision: '+str(failCollisionNumber)+'\n')
+    f.write('number of fails due to cone intersection: '+str(failIntersectionNumber)+'\n')
+    f.write('number of fails due to constraints: '+str(failConstraintNumber)+'\n')
 
 f.close()
 

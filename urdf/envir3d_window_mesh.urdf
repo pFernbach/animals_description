@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot name="object">
+  <link name="base_link"> <!-- required name-->
+    <inertial>
+      <origin xyz="0 0 0" /> 
+      <mass value="1.0" />
+      <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="1.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/envir3d_1.dae"/>
+      </geometry>
+    </visual>
+    <!--<collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/envir3d.dae"/>
+      </geometry>
+    </collision>-->
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/envir3d_1.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!--<joint name="j_decor_one" type="fixed">
+    <parent link="base_link"/>
+    <child link="l_decor_one"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+        
+  <link name="l_decor_one">
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/envir3d.stl"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://animals_description/meshes/envir3d.stl"/>
+      </geometry>
+    </collision>
+  </link>-->
+
+</robot>

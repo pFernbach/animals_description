@@ -13,75 +13,46 @@ from parseLog import parseNodes, parseIntersectionConePlane, parseAlphaAngles
 from parabola_plot_tools import parabPlotDoubleProjCones, parabPlotOriginCones
 import math
 import numpy as np
-Pi = math.pi
 
 robot = Robot ('robot')
-robot.setJointBounds('base_joint_xyz', [-3.9, 3.9, -3.9, 3.9, 2, 11])
+robot.setJointBounds('base_joint_xyz', [-5, 5, -5, 5, -1, 7])
 ps = ProblemSolver (robot)
 cl = robot.client
 
 # Configs : [x, y, z, q1, q2, q3, q4, dir.x, dir.y, dir.z, theta]
-#q1 = [-1.5, -1.5, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]; q2 = [2.6, 3.7, 3.41, 0, 0, 0, 1, 0, 0, 1, 0]
-#q11 = [2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0] # theta = Pi
-#q11 = [2, -2, 3.1, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [2, 2, 3.1, 0, 0, 0, 1, 0, 0, 1, 0] # theta = Pi/2
-#q11 = [-2.5, 3, 4, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [2.5, 2.7, 8, 0, 0, 0, 1, 0, 0, 1, 0] # theta ~= 0
-#q11 = [-2.5, 3, 4, 0, 0, 0, 1,-0.1, 0, 0, 1, 0]; q22 = [2.5, 2.7, 8, 0, 0, 0, 1, -0.1, 0, 0, 1, 0] # theta ~= 0 MONOPOD
-#r(q22)
-
-# theta = Pi/2 NOT VERTICAL !! TEST
-#q11 = [2, -2, 3.1, 0, 0, 0, 1, -0.295995,0.335896,0.894182, 0]; q22 = [2, 2, 3.1, 0, 0, 0, 1, 0, 0, 1, 0]
-#q11 = [2, -2, 3.1, 0, 0, 0, 1, math.cos(Pi/2.0-0.4),0, math.sin(Pi/2.0-0.4), 0]; q22 = [2, 2, 3.1, 0, 0, 0, 1, 0, 0, 1, 0]
-#q11 = [2, -0.2, 5.5, 0, 0, 0, 1, 0, math.cos(-Pi/2.0+0.4), math.sin(-Pi/2.0+0.4), 0]; q22 = [2, 0.5, 3.1, 0, 0, 0, 1, 0, 0, 1, 0] 
-q11 = [2, 1.1, 5.5, 0, 0, 0, 1, 0, -math.cos(-Pi/2.0+0.4), math.sin(-Pi/2.0+0.4), 0]; q22 = [2, 0.5, 3.1, 0, 0, 0, 1, 0, 0, 1, 0] 
-q11 = [2, 1.1, 5.5, 0, 0, 0, 1, math.sqrt(1-0.8), 0, math.sqrt(0.8), 0]; q22 = [3.5, 0.5, 3.1, 0, 0, 0, 1, 0, 0, 1, 0] 
-#q11 = [2, -2, 3.1, 0, 0, 0, 1, -0.295995,0.335896,0.894182, 0]; q22 = [2, 2, 3.1, 0, 0, 0, 1, 0, 0, 1, 0]
-
+q11 = [-3.8, 2.4, 1.2, 0, 0, 0, 1, 0, 0, 1, 0]; q22 = [3.5, -3.3, 0.4, 0, 0, 0, 1, 0, 0, 1, 0] # environment_3d mesh
+r(q22)
 
 from hpp.gepetto import Viewer, PathPlayer
 r = Viewer (ps)
 pp = PathPlayer (robot.client, r)
-r.loadObstacleModel ("animals_description","plane_3d","plane_3d")
-addLight (r, [-3,3,7,1,0,0,0], "li"); addLight (r, [3,-3,7,1,0,0,0], "li1")
+r.loadObstacleModel ("animals_description","envir3d_window_mesh","envir3d_window_mesh")
+#addLight (r, [-5,5,7,1,0,0,0], "li"); addLight (r, [5,-5,7,1,0,0,0], "li1")
 r(q11)
-
-plotFrame (r, "_", [0,0,3.1], 0.5)
-plotThetaPlane (q11, q22, r, "ThetaPlane")
-plotCone (q11, cl, r, "cone1", "friction_cone"); plotCone (q22, cl, r, "cone12", "friction_cone")
-
-ps.setInitialConfig (q11); ps.addGoalConfig (q22)
-cl.problem.setFrictionCoef(0.5); cl.problem.setMaxVelocityLim(15)
-ps.solve ()
-samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.2,1,1])
-
-#r.client.gui.removeFromGroup ("ThetaPlane", r.sceneName)
-#
 
 q1 = cl.robot.projectOnObstacle (q11, 0.001); q2 = cl.robot.projectOnObstacle (q22, 0.001)
 robot.isConfigValid(q1); robot.isConfigValid(q2)
-
+r(q2)
 
 ps.setInitialConfig (q1); ps.addGoalConfig (q2)
-cl.problem.setFrictionCoef(0.5); cl.problem.setMaxVelocityLim(8)
-ps.solve ()
+ps.solve () 
+# PROBLEM !! not finding solution for environment_3d_window with mu=0.5 V0max=6.5 Projectionshooter ....  V0 or Vimp too much limiting ?? 'cause V0max=7 gives a too "easy" solution ...
 
-samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.2,1,1])
-samples = plotSampleSubPath (cl, r, ps.numberPaths()-2, 20, "curvy1", [0.2,0.2,0.8,1])
-samples = plotSampleSubPath (cl, r, ps.numberPaths()-2, 20, "curvy2", [0.2,0.8,0.2,1])
-
-plotCone (q1, cl, r, "cone1", "friction_cone"); plotCone (q2, cl, r, "cone12", "friction_cone")
-plotCone (q1, cl, r, "cone2", "friction_cone2"); plotCone (q2, cl, r, "cone22", "friction_cone2")
+samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
 
 plotConeWaypoints (cl, 0, r, "wp", "friction_cone")
 
+#ps.saveRoadmap ('/local/mcampana/devel/hpp/data/PARAB_envir3d_with_window.rdm')
+
 r.client.gui.setVisibility('robot/l_bounding_sphere',"OFF")
+
+samples = plotSampleSubPath (cl, r, 0, 20, "curvy", [0,0.8,0.2,1])
 
 r(ps.configAtParam(0,0.001))
 ps.pathLength(0)
 ps.getWaypoints (0)
 
-ps.clearRoadmap()
 
-q= [2.65346,-0.823813,7.48169,-0.236625,0.381534,0.845472,0.289165,-0.329554,0.536459,-0.444451,0.339103]
 
 ## 3D Plot tools ##
 q0 = [0, 0, 5, 0, 0, 0, 1, 0, 0, 1, 0];
@@ -93,19 +64,12 @@ plotPath (cl, 0, r, "pathy", 0.1)
 
 plotThetaPlane (q1, q2, r, "ThetaPlane2")
 
-plotSphere (q2, cl, r, "sphere1", [0,1,0,1], 0.1)
+plotCone (q1, cl, r, 0.5, 0.4, "c1")
+plotCone (q2, cl, r, 0.5, 0.4, "c2")
 
 index = cl.robot.getConfigSize () - cl.robot.getExtraConfigSize ()
 q = qa[::]
 q = [-4.77862,-1.56995,2.87339,-0.416537,-0.469186,-0.619709,0.471511,-0.197677,-0.0998335,0.97517,0.619095]
-
-qq =[2.65346,-0.823813,7.48169,-0.236625,0.381534,0.845472,0.289165,-0.329554,0.536459,-0.444451,0.339103]
-plotStraightLine ([-0.329554, 0.536459, -0.444451], qq, r, "normale")
-
-theta = -0.638354; tanTheta = math.tan(theta)
-xPlus = -0.5; xMinus = -0.5; zPlus = -0.0756764; zMinus = -1.08921
-plotStraightLine ([xPlus, xPlus*tanTheta, zPlus], qq, r, "inter12")
-plotStraightLine ([xMinus, xMinus*tanTheta, zMinus], qq, r, "inter22")
 
 qprojCorba=[-4.778619492059025, -1.5699444231861588, 2.873387956706481, 0.9470998051218645, 0.017748399125124163, -0.10999926666084152, 0.3009769340010935, -0.19767685053184691, -0.0998334947491579, 0.9751703113251448, 0.619095]
 plotStraightLine ([q [index],q [index+1],q [index+2]], q, r, "normale2")

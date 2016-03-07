@@ -5,32 +5,11 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.70.0 commit date:2014-03-19, commit time:05:02, hash:19e627c</authoring_tool>
     </contributor>
-    <created>2015-11-30T11:23:57</created>
-    <modified>2015-11-30T11:23:57</modified>
+    <created>2016-03-02T13:51:38</created>
+    <modified>2016-03-02T13:51:38</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
-  <library_cameras>
-    <camera id="Camera-camera" name="Camera">
-      <optics>
-        <technique_common>
-          <perspective>
-            <xfov sid="xfov">49.13434</xfov>
-            <aspect_ratio>1.777778</aspect_ratio>
-            <znear sid="znear">0.1</znear>
-            <zfar sid="zfar">100</zfar>
-          </perspective>
-        </technique_common>
-      </optics>
-      <extra>
-        <technique profile="blender">
-          <YF_dofdist>0</YF_dofdist>
-          <shiftx>0</shiftx>
-          <shifty>0</shifty>
-        </technique>
-      </extra>
-    </camera>
-  </library_cameras>
   <library_images/>
   <library_effects>
     <effect id="Material-effect">
@@ -118,7 +97,7 @@
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
       <node id="Cone" name="Cone" type="NODE">
-        <matrix sid="transform">0.2052727 0 0 0 0 -0.2052727 2.95194e-8 0 0 -3.09953e-8 -0.1954979 0.1961158 0 0 0 1</matrix>
+        <matrix sid="transform">0.1954979 0 0 0 0 -0.1954979 2.95194e-8 0 0 -2.95194e-8 -0.1954979 0.1961158 0 0 0 1</matrix>
         <instance_geometry url="#Cone-mesh">
           <bind_material>
             <technique_common>
@@ -126,10 +105,6 @@
             </technique_common>
           </bind_material>
         </instance_geometry>
-      </node>
-      <node id="Camera" name="Camera" type="NODE">
-        <matrix sid="transform">0.6858805 -0.3173701 0.6548619 7.481132 0.7276338 0.3124686 -0.6106656 -6.50764 -0.01081678 0.8953432 0.4452454 5.343665 0 0 0 1</matrix>
-        <instance_camera url="#Camera-camera"/>
       </node>
     </visual_scene>
   </library_visual_scenes>
