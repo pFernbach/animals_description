@@ -1,6 +1,7 @@
 #/usr/bin/env python
 # Script which goes with animals_description package.
 # Functions library to display graphic things (trajectory, cone, frame...) on the Gepetto-viewer
+# And functions to write data which will be parsed by Blender
 
 from __future__ import division
 import numpy as np
@@ -71,6 +72,7 @@ def plotFrame (r, frameGroupName, framePosition, ampl):
 # r: viewer server
 # coneGroupName: string used for cone group name ('cone_wp_group')
 # coneURDFname: "friction_cone" (mu = 0.5) or "friction_cone2" (mu = 1.2)
+# To avoid problem with cone names in Blender, use also "friction_cone_WP"...
 def plotConeWaypoints (cl, nPath, r, coneGroupName, coneURDFname):
     wp = cl.problem.getWaypoints (nPath)
     r.client.gui.createGroup (coneGroupName)
@@ -90,6 +92,7 @@ def plotConeWaypoints (cl, nPath, r, coneGroupName, coneURDFname):
 # r: viewer server
 # coneName: string used for cone name (e.g. "cone_wp0/this_cone")
 # coneURDFname: "friction_cone" (mu = 0.5) or "friction_cone2" (mu = 1.2)
+# To avoid problem with cone names in Blender, use also "friction_cone_SG"...
 def plotCone (q, cl, r, coneName, coneURDFname):
     qCone = cl.robot.setOrientation (q)
     r.loadObstacleModel ("animals_description",coneURDFname,coneName)
@@ -269,5 +272,96 @@ def plotConesRoadmap (cl, r, coneGroupName, coneURDFname):
         r.client.gui.addToGroup (coneName_i, coneGroupName)
     r.client.gui.addSceneToWindow(coneGroupName,r.windowId)
 
+# --------------------------------------------------------------------#
 
+## Plot each edge of the roadmap from sampled points ##
+## Parameters:
+# cl: corbaserver client
+# r: viewer server
+# edgeGroupName: edge group name
+def plotEdgesRoadmap (cl, r, edgeGroupName, nbPointsPerEdge, curveColor):
+    gui = r.client.gui
+    gui.createGroup (edgeGroupName)
+    numEdges = cl.problem.numberEdges ()
+    for k in range (0,numEdges,2): # one over two (avoid reverse edge)
+        samplesEdge_k = cl.problem.edgeToSampledPathVector (k, nbPointsPerEdge)
+        pointsEdge_k = []
+        for i in range(0, len(samplesEdge_k)):
+            pointsEdge_k.append ([samplesEdge_k [i][0], samplesEdge_k [i][1], samplesEdge_k [i][2]])
+        nameEdge_k = edgeGroupName+'edge_'+str(k)
+        r.client.gui.addCurve (nameEdge_k, pointsEdge_k, curveColor)
+        r.client.gui.addToGroup (nameEdge_k, edgeGroupName)
+    
+    r.client.gui.addSceneToWindow(edgeGroupName,r.windowId)
+
+# --------------------------------------------------------------------#
+
+# ----------------------------## BLENDER ##------------------------------------#
+
+## Write Path-motion in Yaml file ##
+## Parameters:
+# cl: corbaserver client
+# fileName: name (string) of the file where samples will be written
+def pathToYamlFile (cl, r, fileName, robotName, pathId, goalConfig, dt):
+    gui = r.client.gui
+    FrameRange = np.arange(0, cl.problem.pathLength(pathId), dt)
+    gui.setCaptureTransform (fileName, [robotName])
+    for t in FrameRange:
+        q = cl.problem.configAtParam (pathId, t)#update robot configuration
+        r (q); cl.robot.setCurrentConfig(q)
+        gui.refresh ()
+        gui.captureTransform ()
+    
+    r (goalConfig); cl.robot.setCurrentConfig(goalConfig)
+    gui.refresh ()
+    gui.captureTransform ()
+
+# --------------------------------------------------------------------#
+
+## Write Edge samples to text file ##
+# because exporting the edges directly in .obj creates BIG files
+## Parameters:
+# cl: corbaserver client
+# fileName: name (string) of the file where samples will be written
+def writeEdgeSamples (cl, fileName, nbPointsPerEdge):
+    numEdges = cl.problem.numberEdges ()
+    f = open(fileName,'a')
+    for k in range (0,numEdges,2):
+        print ("Edge number: " + str(k))
+        samplesEdge_k = cl.problem.edgeToSampledPathVector (k, nbPointsPerEdge)
+        f.write('e'+'\n')
+        for i in range(0, len(samplesEdge_k)):
+            f.write(str(samplesEdge_k [i]).strip('[]')+'\n') # write point i
+    
+    f.close()
+
+# --------------------------------------------------------------------#
+
+## Write Path samples to text file ##
+# require samples from "pathSamples = plotSampleSubPath (cl, r, pathId, 70, "path0", [0,0,1,1])"
+## Parameters:
+# pathSamples: sample used to plot solution-path in viewer
+# fileName: name (string) of the file where samples will be written
+def writePathSamples (pathSamples, fileName):
+    numPathSamples = len(pathSamples)
+    f = open(fileName,'a')
+    for i in range (0,numPathSamples):
+        print ("sample number: " + str(i))
+        f.write(str(pathSamples [i]).strip('[]')+'\n') # write point i
+    
+    f.close()
+
+# --------------------------------------------------------------------#
+
+## Write RM edge and node index associated to solution-path:
+# cl: corbaserver client
+# fileName: name (string) of the file where samples will be written
+def writeSkipList (cl, fileName):
+    l1 = cl.problem.getEdgeIndexVector() #[0, 3, 12, 16, 24, 21, 10, 8]
+    l2 = cl.problem.getNodeIndexVector() #[0, 0, 6, 15, 17, 18, 13, 14]
+    del l1 [0]; del l2 [0]; del l2 [0];
+    f = open(fileName,'a')
+    f.write(str(l1).strip('[]')+'\n')
+    f.write(str(l2).strip('[]')+'\n')
+    f.close()
 

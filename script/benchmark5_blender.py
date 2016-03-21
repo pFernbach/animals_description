@@ -43,14 +43,13 @@ ps.clearRoadmap();
 solveTime = ps.solve () # 0.312 s  388 nodes
 pathId = ps.numberPaths()-offsetOrientedPath # path without orientation stuff
 
-pp.displayPath(pathId)
-plotCone (q1, cl, r, "cone_first", "friction_cone2"); plotCone (q2, cl, r, "cone_second", "friction_cone2")
-plotConeWaypoints (cl, pathId, r, "cone_wp_group", "friction_cone2")
+pathSamples = plotSampleSubPath (cl, r, pathId, 70, "path0", [0,0,1,1])
+plotCone (q1, cl, r, "cone_first", "friction_cone_SG2"); plotCone (q2, cl, r, "cone_second", "friction_cone_SG2")
+plotConeWaypoints (cl, pathId, r, "cone_wp_group", "friction_cone_WP2")
 
-gui.writeNodeFile('cone_wp_group','cones_wp0_cave_easy.dae')
-gui.writeNodeFile('cone_first','cone_first_cave_easy.dae')
-gui.writeNodeFile('cone_second','cone_second_cave_easy.dae')
-gui.writeNodeFile('path_0_root','path_cave_easy.obj')
+gui.writeNodeFile('cone_wp_group','cones_path.dae')
+gui.writeNodeFile('cone_first','cone_start.dae')
+gui.writeNodeFile('cone_second','cone_goal.dae')
 
 
 # Second parabolas: vmax = 6.5m/s,  mu = 0.5
@@ -59,14 +58,13 @@ ps.clearRoadmap();
 solveTime = ps.solve () # 0.9689 s
 pathId = ps.numberPaths()-offsetOrientedPath
 
-pp.displayPath(pathId)
-plotCone (q1, cl, r, "cone_first", "friction_cone"); plotCone (q2, cl, r, "cone_second", "friction_cone")
-plotConeWaypoints (cl, pathId, r, "cone_wp_group", "friction_cone")
+pathSamples = plotSampleSubPath (cl, r, pathId, 70, "path1", [1,0,0,1])
+plotCone (q1, cl, r, "cone_first", "friction_cone"); plotCone (q2, cl, r, "cone_second", "friction_cone_SG")
+plotConeWaypoints (cl, pathId, r, "cone_wp_group", "friction_cone_WP")
 
-gui.writeNodeFile('cone_wp_group','cones_wp0_cave_hard.dae')
-gui.writeNodeFile('cone_first','cone_first_cave_hard.dae')
-gui.writeNodeFile('cone_second','cone_second_cave_hard.dae')
-gui.writeNodeFile('path_2_root','path_cave_hard.obj')
+gui.writeNodeFile('cone_wp_group','cones_path.dae')
+gui.writeNodeFile('cone_first','cone_start.dae')
+gui.writeNodeFile('cone_second','cone_goal.dae')
 
 
 ## 3D Plot tools ##
@@ -81,26 +79,28 @@ gui.writeNodeFile('path_2_root','path_cave_hard.obj')
 # I skip the "collada generation part" since I already have them from blender ...
 blender/urdf_to_blender.py -p /local/mcampana/devel/hpp/videos/ -i /local/mcampana/devel/hpp/src/animals_description/urdf/sphere_mesh.urdf -o robot_blend.py # generate robot loadable by Blender
 
-dt = 0.02
-PL = ps.pathLength(pathId)
-FrameRange = np.arange(0,PL,dt)
-numberFrame = len(FrameRange)
+from viewer_display_library import pathToYamlFile, writeEdgeSamples, writePathSamples, writeSkipList
 
-gui.setCaptureTransform ("frames_cave_hard.yaml", ["robot/base_link"]) # DON'T FORGET TO RENAME
-# Frame by Frame
-for t in FrameRange:
-        q = ps.configAtParam (pathId, t)#update robot configuration
-        r (q); robot.setCurrentConfig(q)
-        gui.refresh ()
-        gui.captureTransform ()
+len(np.arange(0, ps.pathLength(pathId), 0.02))
+pathToYamlFile (cl, r, "frames.yaml ", "robot/base_link", pathId, q2, 0.02)
 
-r (q2); robot.setCurrentConfig(q2)
-gui.refresh ()
-gui.captureTransform ()
-
-# Tentative for roadmap ....
 ps.numberNodes()
-plotConesRoadmap (cl, r, 'cone_rm_group', "friction_cone2")
 
-gui.writeNodeFile('cone_rm_group','cones_rm_cave_easy.dae')
+
+# Plot cones and edges in viewer
+plotConesRoadmap (cl, r, 'cone_rm_group', "friction_cone2")
+plotEdgesRoadmap (cl, r, 'edgeGroup', 70, [0,1,0.2,1])
+
+gui.writeNodeFile('cone_rm_group','cones_RM.dae')
+
+## Write EDGES in a file, which will be parsed by a Blender-Python script
+writeEdgeSamples (cl, 'edges.txt', 70)
+
+## Write PATH samples in a file, which will be parsed by a Blender-Python script
+pathSamples = plotSampleSubPath (cl, r, pathId, 70, "path0", [0,0,1,1])
+writePathSamples (pathSamples, 'path.txt')
+
+## Write RM edge and node index associated to solution-path:
+writeSkipList (cl, 'indexes.txt') #[0, 3, 12, 16, 24, 21, 10, 8] #[0, 0, 6, 15, 17, 18, 13, 14]
+
 
