@@ -46,7 +46,10 @@ install(DIRECTORY meshes/
 install(DIRECTORY srdf/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/srdf)
 
-
+install(FILES
+  package.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  )
 install (FILES
   src/hpp/corbaserver/rabbit/robot.py
   src/hpp/corbaserver/rabbit/__init__.py
@@ -57,15 +60,15 @@ install (FILES
   src/hpp/corbaserver/ant/__init__.py
   DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/ant)
 
-install (FILES
-  src/hpp/corbaserver/sphere/robot.py
-  src/hpp/corbaserver/sphere/__init__.py
-  DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/sphere)
+#install (FILES
+#  src/hpp/corbaserver/sphere/robot.py
+#  src/hpp/corbaserver/sphere/__init__.py
+#  DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/sphere)
 
-install (FILES
-  src/hpp/corbaserver/sphere_mesh/robot.py
-  src/hpp/corbaserver/sphere_mesh/__init__.py
-  DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/sphere_mesh)
+#install (FILES
+#  src/hpp/corbaserver/sphere_mesh/robot.py
+#  src/hpp/corbaserver/sphere_mesh/__init__.py
+#  DESTINATION ${PYTHON_SITELIB}/hpp/corbaserver/sphere_mesh)
 
 install (FILES
   src/hpp/corbaserver/ant_sphere/robot.py
